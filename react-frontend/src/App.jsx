@@ -26,6 +26,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminStores from './pages/AdminStores';
 import AdminListings from './pages/AdminListings';
+import SuggestLocation from './pages/SuggestLocation';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
               <Route path="/listings/:id" element={<ListingDetails />} />
               <Route path="/stores/:id" element={<StoreDetails />} />
               <Route path="/map" element={<MapExplorer />} />
+              <Route path="/suggest-location" element={<SuggestLocation />} />
               
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />

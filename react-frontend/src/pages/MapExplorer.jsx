@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import MapComponent from '../components/MapComponent';
 import StoreCard from '../components/StoreCard';
@@ -201,30 +202,43 @@ const MapExplorer = () => {
               </div>
             </div>
 
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 rounded-xl p-1">
-              <button
-                onClick={() => setViewMode('map')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold transition-all ${
-                  viewMode === 'map'
-                    ? 'bg-white text-blue-600 shadow-md'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
+            {/* View Mode Toggle and Suggest Button */}
+            <div className="flex items-center space-x-3">
+              <Link
+                to="/suggest-location"
+                className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
               >
-                <FaMapMarkedAlt />
-                <span>Map</span>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold transition-all ${
-                  viewMode === 'list'
-                    ? 'bg-white text-blue-600 shadow-md'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <FaList />
-                <span>List</span>
-              </button>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                <span className="hidden sm:inline">Suggest Location</span>
+                <span className="sm:hidden">Suggest</span>
+              </Link>
+              
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+                    viewMode === 'map'
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <FaMapMarkedAlt />
+                  <span>Map</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+                    viewMode === 'list'
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <FaList />
+                  <span>List</span>
+                </button>
+              </div>
             </div>
           </div>
 
