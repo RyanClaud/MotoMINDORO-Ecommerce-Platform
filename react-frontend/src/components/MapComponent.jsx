@@ -22,54 +22,130 @@ Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// Custom icons for different shop types
-const motorcycleShopIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+// Create custom DivIcon with emoji and colored background
+const createCustomIcon = (shopType) => {
+  let emoji, bgColor, label;
+  
+  switch (shopType) {
+    case 'vulcanizing_shop':
+      emoji = '🔧';
+      bgColor = '#eab308'; // yellow-500
+      label = 'Vulcanizing';
+      break;
+    case 'gasoline_station':
+      emoji = '⛽';
+      bgColor = '#dc2626'; // red-600
+      label = 'Gas Station';
+      break;
+    case 'motorcycle_shop':
+    default:
+      emoji = '🏍️';
+      bgColor = '#2563eb'; // blue-600
+      label = 'Motorcycle';
+      break;
+  }
 
-const vulcanizingShopIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+  return L.divIcon({
+    html: `
+      <div style="position: relative; width: 40px; height: 50px;">
+        <div style="
+          position: absolute;
+          top: -25px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: ${bgColor};
+          color: white;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 10px;
+          font-weight: bold;
+          white-space: nowrap;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          border: 2px solid white;
+        ">${label}</div>
+        <div style="
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40px;
+          height: 40px;
+          background: ${bgColor};
+          border-radius: 50% 50% 50% 0;
+          transform: translateX(-50%) rotate(-45deg);
+          border: 3px solid white;
+          box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <span style="
+            transform: rotate(45deg);
+            font-size: 20px;
+            display: block;
+          ">${emoji}</span>
+        </div>
+      </div>
+    `,
+    className: 'custom-marker',
+    iconSize: [40, 50],
+    iconAnchor: [20, 50],
+    popupAnchor: [0, -50]
+  });
+};
 
-const gasolineStationIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-const userLocationIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: markerShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
+// User location icon
+const userLocationIcon = L.divIcon({
+  html: `
+    <div style="position: relative; width: 40px; height: 50px;">
+      <div style="
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #16a34a;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: bold;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        border: 2px solid white;
+      ">You</div>
+      <div style="
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        background: #16a34a;
+        border-radius: 50% 50% 50% 0;
+        transform: translateX(-50%) rotate(-45deg);
+        border: 3px solid white;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <span style="
+          transform: rotate(45deg);
+          font-size: 20px;
+          display: block;
+        ">📍</span>
+      </div>
+    </div>
+  `,
+  className: 'custom-marker',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50]
 });
 
 // Get icon based on shop type
 const getShopIcon = (shopType) => {
-  switch (shopType) {
-    case 'vulcanizing_shop':
-      return vulcanizingShopIcon;
-    case 'gasoline_station':
-      return gasolineStationIcon;
-    case 'motorcycle_shop':
-    default:
-      return motorcycleShopIcon;
-  }
+  return createCustomIcon(shopType);
 };
 
 // Routing component
@@ -896,3 +972,38 @@ const MapComponent = ({ stores = [] }) => {
 };
 
 export default MapComponent;
+
+// Add custom styles for markers
+const style = document.createElement('style');
+style.textContent = `
+  .custom-marker {
+    background: transparent !important;
+    border: none !important;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+  }
+  
+  .pulse-circle {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.3;
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+  }
+`;
+if (typeof document !== 'undefined') {
+  document.head.appendChild(style);
+}
