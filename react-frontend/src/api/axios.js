@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Use environment variable for API URL, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -11,7 +14,7 @@ const api = axios.create({
 
 // Get CSRF token before making requests
 export const getCsrfToken = async () => {
-  await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+  await axios.get(`${API_BASE_URL}/sanctum/csrf-cookie`, {
     withCredentials: true
   });
 };
