@@ -1,0 +1,648 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
+import { 
+  FaPlus, FaStore, FaMotorcycle, FaEye, FaDollarSign, FaEdit, 
+  FaTrash, FaCheckCircle, FaTimes, FaBox, FaExclamationTriangle, 
+  FaUsers, FaMapMarkerAlt, FaChartBar, FaTrophy, FaFire
+} from 'react-icons/fa';
+
+const Dashboard = () => {
+  const { user, switchRole } = useAuth();
+  const navigate = useNavigate();
+  const [myStores, setMyStores] = useState([]);
+  const [myListings, setMyListings] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedListing, setSelectedListing] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    status: '',
+    stock_quantity: 1,
+  });
+
+  useEffect(() => {
+    // Redirect admins to admin dashboard
+    if (user?.role === 'admin') {
+      navigate('/admin/dashboard');
+      return;
+    }
+    
+    if (user?.role === 'seller') {
+      fetchMyData();
+    } else {
+      setLoading(false);
+    }
+  }, [user, navigate]);
+
+  const fetchMyData = async () => {
+    try {
+      const [storesRes, listingsRes] = await Promise.all([
+        api.get('/my-stores'),
+        api.get('/my-listings'),
+      ]);
+      setMyStores(storesRes.data || []);
+      setMyListings(listingsRes.data || []);
+      calculateAnalytics(storesRes.data || [], listingsRes.data || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Set empty data and default analytics on error
+      setMyStores([]);
+      setMyListings([]);
+      setAnalytics({
+        totalStores: 0,
+        totalListings: 0,
+        publishedListings: 0,
+        soldListings: 0,
+        draftListings: 0,
+        lowStockListings: 0,
+        outOfStockListings: 0,
+        totalViews: 0,
+        totalRevenue: 0,
+        averagePrice: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateAnalytics = (stores, listings) => {
+    try {
+      const totalViews = listings.reduce((sum, l) => sum + (l.views || 0), 0);
+      const totalRevenue = listings
+        .filter(l => l.status === 'sold')
+        .reduce((sum, l) => sum + parseFloat(l.price || 0), 0);
+      
+      const publishedListings = listings.filter(l => l.status === 'published').length;
+      const soldListings = listings.filter(l => l.status === 'sold').length;
+      const draftListings = listings.filter(l => l.status === 'draft').length;
+      const lowStockListings = listings.filter(l => (l.stock_quantity || 0) > 0 && (l.stock_quantity || 0) <= 3).length;
+      const outOfStockListings = listings.filter(l => (l.stock_quantity || 0) === 0).length;
+
+      setAnalytics({
+        totalStores: stores.length,
+        totalListings: listings.length,
+        publishedListings,
+        soldListings,
+        draftListings,
+        lowStockListings,
+        outOfStockListings,
+        totalViews,
+        totalRevenue,
+        averagePrice: listings.length > 0 ? listings.reduce((sum, l) => sum + parseFloat(l.price || 0), 0) / listings.length : 0,
+      });
+    } catch (error) {
+      console.error('Error calculating analytics:', error);
+      // Set default analytics if calculation fails
+      setAnalytics({
+        totalStores: stores.length,
+        totalListings: listings.length,
+        publishedListings: 0,
+        soldListings: 0,
+        draftListings: 0,
+        lowStockListings: 0,
+        outOfStockListings: 0,
+        totalViews: 0,
+        totalRevenue: 0,
+        averagePrice: 0,
+      });
+    }
+  };
+
+  const handleSwitchRole = async (newRole) => {
+    try {
+      await switchRole(newRole);
+      if (newRole === 'seller') {
+        fetchMyData();
+      }
+    } catch (error) {
+      console.error('Error switching role:', error);
+    }
+  };
+
+  const handleEditClick = (listing) => {
+    setSelectedListing(listing);
+    setEditForm({
+      status: listing.status,
+      stock_quantity: listing.stock_quantity || 1,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateListing = async () => {
+    try {
+      await api.put(`/listings/${selectedListing.id}`, editForm);
+      setShowEditModal(false);
+      fetchMyData();
+    } catch (error) {
+      console.error('Error updating listing:', error);
+      alert('Failed to update listing');
+    }
+  };
+
+  const handleDeleteListing = async (id) => {
+    if (!confirm('Are you sure you want to delete this listing?')) return;
+    
+    try {
+      await api.delete(`/listings/${id}`);
+      fetchMyData();
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      alert('Failed to delete listing');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 absolute top-0"></div>
+        </div>
+        <p className="mt-4 text-gray-600 font-medium">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Enhanced Header with Gradient */}
+        <div className="mb-8 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-white/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-5xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3">
+                  Dashboard
+                </h1>
+                <p className="text-lg text-gray-600">
+                  Welcome back, <span className="font-bold text-blue-600">{user?.name}</span>! 👋
+                </p>
+              </div>
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Account Type</p>
+                  <p className="text-xl font-bold text-gray-900 capitalize">{user?.role}</p>
+                </div>
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-3xl text-white font-black">{user?.name?.charAt(0).toUpperCase()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modern Role Switcher */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 mb-8 border border-white/20">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Switch Mode</h2>
+            <span className="text-sm text-gray-500">Choose your experience</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={() => handleSwitchRole('buyer')}
+              className={`group relative overflow-hidden px-6 py-6 rounded-2xl font-bold transition-all duration-300 ${
+                user?.role === 'buyer'
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105'
+                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:scale-105 hover:shadow-lg'
+              }`}
+            >
+              <div className="relative z-10 flex flex-col items-center space-y-2">
+                <FaUsers className="text-3xl" />
+                <span>Buyer</span>
+                {user?.role === 'buyer' && (
+                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Active</span>
+                )}
+              </div>
+              {user?.role === 'buyer' && (
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+              )}
+            </button>
+            <button
+              onClick={() => handleSwitchRole('seller')}
+              className={`group relative overflow-hidden px-6 py-6 rounded-2xl font-bold transition-all duration-300 ${
+                user?.role === 'seller' || user?.role === 'admin'
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105'
+                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:scale-105 hover:shadow-lg'
+              }`}
+            >
+              <div className="relative z-10 flex flex-col items-center space-y-2">
+                <FaStore className="text-3xl" />
+                <span>Seller</span>
+                {(user?.role === 'seller' || user?.role === 'admin') && (
+                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Active</span>
+                )}
+              </div>
+              {(user?.role === 'seller' || user?.role === 'admin') && (
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {(user?.role === 'seller' || user?.role === 'admin') && analytics && (
+          <>
+            {/* Modern Analytics Cards with Glassmorphism */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {/* Total Stores */}
+              <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-white/20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                      <FaStore className="text-3xl text-white" />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-4xl font-black text-gray-900">{analytics.totalStores}</span>
+                      <div className="flex items-center justify-end text-green-600 text-sm font-semibold mt-1">
+                        <FaChartBar className="mr-1" />
+                        <span>Active</span>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="text-gray-600 font-bold text-lg">Total Stores</h3>
+                </div>
+              </div>
+
+              {/* Total Listings */}
+              <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-white/20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                      <FaMotorcycle className="text-3xl text-white" />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-4xl font-black text-gray-900">{analytics.totalListings}</span>
+                      <div className="flex items-center justify-end text-blue-600 text-sm font-semibold mt-1">
+                        <FaTrophy className="mr-1" />
+                        <span>Listed</span>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="text-gray-600 font-bold text-lg">Total Listings</h3>
+                </div>
+              </div>
+
+              {/* Total Views */}
+              <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-white/20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="bg-gradient-to-br from-purple-600 to-pink-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                      <FaEye className="text-3xl text-white" />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-4xl font-black text-gray-900">{analytics.totalViews}</span>
+                      <div className="flex items-center justify-end text-purple-600 text-sm font-semibold mt-1">
+                        <FaFire className="mr-1" />
+                        <span>Views</span>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="text-gray-600 font-bold text-lg">Total Views</h3>
+                </div>
+              </div>
+
+              {/* Total Revenue */}
+              <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-white/20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 to-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="bg-gradient-to-br from-green-600 to-emerald-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                      <FaDollarSign className="text-3xl text-white" />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-4xl font-black text-gray-900">₱{(analytics.totalRevenue / 1000).toFixed(0)}K</span>
+                      <div className="flex items-center justify-end text-green-600 text-sm font-semibold mt-1">
+                        <FaDollarSign className="mr-1" />
+                        <span>Revenue</span>
+                      </div>
+                    </div>
+                  </div>
+                  <h3 className="text-gray-600 font-bold text-lg">Total Revenue</h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Status Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                <div className="flex items-center justify-between">
+                  <FaCheckCircle className="text-2xl text-green-600" />
+                  <span className="text-2xl font-bold text-gray-900">{analytics.publishedListings}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Published</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200">
+                <div className="flex items-center justify-between">
+                  <FaBox className="text-2xl text-blue-600" />
+                  <span className="text-2xl font-bold text-gray-900">{analytics.soldListings}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Sold</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
+                <div className="flex items-center justify-between">
+                  <FaEdit className="text-2xl text-gray-600" />
+                  <span className="text-2xl font-bold text-gray-900">{analytics.draftListings}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Draft</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 border-2 border-yellow-200">
+                <div className="flex items-center justify-between">
+                  <FaExclamationTriangle className="text-2xl text-yellow-600" />
+                  <span className="text-2xl font-bold text-gray-900">{analytics.lowStockListings}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Low Stock</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-2 border-red-200">
+                <div className="flex items-center justify-between">
+                  <FaTimes className="text-2xl text-red-600" />
+                  <span className="text-2xl font-bold text-gray-900">{analytics.outOfStockListings}</span>
+                </div>
+                <p className="text-sm text-gray-700 mt-2 font-medium">Out of Stock</p>
+              </div>
+            </div>
+
+            {/* My Stores Section */}
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                  <FaStore className="mr-3 text-blue-600" />
+                  My Stores
+                </h2>
+                <Link
+                  to="/stores/create"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                >
+                  <FaPlus />
+                  <span>Add Store</span>
+                </Link>
+              </div>
+
+              {myStores.length === 0 ? (
+                <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+                  <FaStore className="text-6xl text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-6 text-lg">You haven't created any stores yet.</p>
+                  <Link
+                    to="/stores/create"
+                    className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                  >
+                    Create Your First Store
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {myStores.map((store) => (
+                    <div key={store.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
+                      {store.banner && (
+                        <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+                          <img src={`http://localhost:8000/storage/${store.banner}`} alt={store.name} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="p-6">
+                        <div className="flex items-start space-x-4">
+                          {store.logo && (
+                            <img src={`http://localhost:8000/storage/${store.logo}`} alt={store.name} className="w-16 h-16 rounded-lg object-cover" />
+                          )}
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{store.name}</h3>
+                            <p className="text-gray-600 text-sm mb-3">{store.city}</p>
+                            <div className="flex items-center space-x-4 text-sm">
+                              <span className="text-gray-600">
+                                <FaMotorcycle className="inline mr-1" />
+                                {store.listings?.length || 0} listings
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <Link
+                          to={`/stores/${store.id}`}
+                          className="mt-4 block w-full text-center bg-blue-50 text-blue-600 py-2 rounded-lg font-semibold hover:bg-blue-100 transition-all"
+                        >
+                          View Store
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* My Listings Section with CRUD */}
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                  <FaMotorcycle className="mr-3 text-blue-600" />
+                  My Listings
+                </h2>
+                <Link
+                  to="/listings/create"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                >
+                  <FaPlus />
+                  <span>Add Listing</span>
+                </Link>
+              </div>
+
+              {myListings.length === 0 ? (
+                <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+                  <FaMotorcycle className="text-6xl text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-6 text-lg">You haven't created any listings yet.</p>
+                  <Link
+                    to="/listings/create"
+                    className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                  >
+                    Create Your First Listing
+                  </Link>
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b-2 border-gray-200">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Motorcycle</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Views</th>
+                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {myListings.map((listing) => (
+                          <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                                  {listing.primary_image?.image_path || listing.primaryImage?.image_path ? (
+                                    <img
+                                      src={`http://localhost:8000/storage/${listing.primary_image?.image_path || listing.primaryImage?.image_path}`}
+                                      alt={listing.title}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => { e.target.src = 'https://via.placeholder.com/64?text=No+Image'; }}
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <FaMotorcycle className="text-2xl text-gray-400" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div>
+                                  <Link to={`/listings/${listing.id}`} className="font-semibold text-gray-900 hover:text-blue-600">
+                                    {listing.title}
+                                  </Link>
+                                  <p className="text-sm text-gray-600">{listing.year} • {listing.engine_displacement}cc</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="font-bold text-blue-600">₱{listing.price.toLocaleString()}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                listing.status === 'published' ? 'bg-green-100 text-green-800' :
+                                listing.status === 'sold' ? 'bg-blue-100 text-blue-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {listing.status.charAt(0).toUpperCase() + listing.status.slice(1)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`font-semibold ${
+                                (listing.stock_quantity || 0) === 0 ? 'text-red-600' :
+                                (listing.stock_quantity || 0) <= 3 ? 'text-yellow-600' :
+                                'text-green-600'
+                              }`}>
+                                {listing.stock_quantity || 0} units
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-gray-600">{listing.views || 0}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() => handleEditClick(listing)}
+                                  className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-all"
+                                  title="Edit Status & Stock"
+                                >
+                                  <FaEdit />
+                                </button>
+                                <Link
+                                  to={`/listings/${listing.id}/edit`}
+                                  className="p-2 bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 transition-all"
+                                  title="Edit Full Details"
+                                >
+                                  <FaMotorcycle />
+                                </Link>
+                                <button
+                                  onClick={() => handleDeleteListing(listing.id)}
+                                  className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all"
+                                  title="Delete"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {user?.role === 'buyer' && (
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+            <FaUsers className="text-6xl text-blue-600 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Buyer Dashboard</h2>
+            <p className="text-gray-600 mb-8 text-lg">
+              Browse motorcycles, save favorites, and contact sellers.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Link
+                to="/search"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+              >
+                Browse Motorcycles
+              </Link>
+              <Link
+                to="/favorites"
+                className="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+              >
+                View Favorites
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {showEditModal && selectedListing && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowEditModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Update Listing Status</h3>
+            
+            <div className="space-y-6">
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                <select
+                  value={editForm.status}
+                  onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                  <option value="sold">Sold</option>
+                </select>
+              </div>
+
+              {/* Stock Quantity */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={editForm.stock_quantity}
+                  onChange={(e) => setEditForm({ ...editForm, stock_quantity: parseInt(e.target.value) || 0 })}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Set to 0 for out of stock</p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex space-x-3 pt-4">
+                <button
+                  onClick={handleUpdateListing}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Dashboard;
