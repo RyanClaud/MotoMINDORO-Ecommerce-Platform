@@ -19,6 +19,18 @@ const StoreCard = ({ store }) => {
           </div>
 
           <div className="flex-1">
+            <div className="mb-2">
+              <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
+                store.shop_type === 'motorcycle_shop' ? 'bg-blue-100 text-blue-800' :
+                store.shop_type === 'vulcanizing_shop' ? 'bg-orange-100 text-orange-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {store.shop_type === 'motorcycle_shop' ? '🏍️ Motorcycle Shop' :
+                 store.shop_type === 'vulcanizing_shop' ? '🔧 Vulcanizing Shop' :
+                 '⛽ Gas Station'}
+              </span>
+            </div>
+            
             <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600 mb-1">
               {store.name}
             </h3>
