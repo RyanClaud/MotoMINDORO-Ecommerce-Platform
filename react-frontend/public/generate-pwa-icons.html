@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons - MotoMINDORO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 { color: #333; margin-bottom: 1rem; }
+        .status { margin: 1rem 0; color: #666; }
+        .success { color: #10b981; font-weight: bold; }
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏍️ MotoMINDORO PWA Icons</h1>
+        <div class="status" id="status">Generating icons...</div>
+    </div>
+
+    <canvas id="canvas192" width="192" height="192"></canvas>
+    <canvas id="canvas512" width="512" height="512"></canvas>
+
+    <script>
+        function generateIcon(size, canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(1, '#7c3aed');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Add pattern overlay
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            for (let i = 0; i < size; i += 20) {
+                for (let j = 0; j < size; j += 20) {
+                    ctx.fillRect(i, j, 10, 10);
+                }
+            }
+
+            // Add motorcycle emoji/icon
+            ctx.font = `bold ${size * 0.5}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('🏍️', size / 2, size / 2);
+
+            // Add text
+            ctx.font = `bold ${size * 0.12}px Arial`;
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('MotoMINDORO', size / 2, size * 0.85);
+
+            return canvas;
+        }
+
+        function downloadCanvas(canvas, filename) {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    resolve();
+                });
+            });
+        }
+
+        async function generateIcons() {
+            const status = document.getElementById('status');
+            
+            try {
+                // Generate 192x192
+                status.textContent = 'Generating 192x192 icon...';
+                const canvas192 = generateIcon(192, 'canvas192');
+                await downloadCanvas(canvas192, 'pwa-192x192.png');
+                
+                // Wait a bit
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Generate 512x512
+                status.textContent = 'Generating 512x512 icon...';
+                const canvas512 = generateIcon(512, 'canvas512');
+                await downloadCanvas(canvas512, 'pwa-512x512.png');
+                
+                // Success
+                status.className = 'status success';
+                status.textContent = '✓ Icons generated successfully! Check your downloads folder.';
+                
+                // Add instructions
+                setTimeout(() => {
+                    status.innerHTML = `
+                        <div class="success">✓ Icons generated successfully!</div>
+                        <div style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                            <strong>Next steps:</strong><br>
+                            1. Move both PNG files to: <code>react-frontend/public/</code><br>
+                            2. Restart your dev server<br>
+                            3. Your PWA is now installable! 🎉
+                        </div>
+                    `;
+                }, 1000);
+            } catch (error) {
+                status.textContent = '❌ Error generating icons: ' + error.message;
+                status.style.color = '#ef4444';
+            }
+        }
+
+        // Start generation
+        setTimeout(generateIcons, 500);
+    </script>
+</body>
+</html>

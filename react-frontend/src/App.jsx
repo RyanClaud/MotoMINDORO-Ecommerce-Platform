@@ -26,6 +26,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminStores from './pages/AdminStores';
 import AdminListings from './pages/AdminListings';
+import AdminLocationSuggestions from './pages/AdminLocationSuggestions';
 import SuggestLocation from './pages/SuggestLocation';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -63,6 +64,7 @@ function App() {
               <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
               <Route path="/admin/stores" element={<ProtectedRoute><AdminStores /></ProtectedRoute>} />
               <Route path="/admin/listings" element={<ProtectedRoute><AdminListings /></ProtectedRoute>} />
+              <Route path="/admin/location-suggestions" element={<ProtectedRoute><AdminLocationSuggestions /></ProtectedRoute>} />
             </Routes>
           </main>
           <Footer />
