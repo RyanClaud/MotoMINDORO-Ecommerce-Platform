@@ -219,25 +219,13 @@ const Navbar = () => {
                       <span>Profile Settings</span>
                     </Link>
                     {user.role !== 'admin' && (
-                      <>
-                        <button
-                          onClick={() => setSoundEnabled(!soundEnabled)}
-                          className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                        >
-                          {soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />}
-                          <span>{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playNotificationSound();
-                          }}
-                          className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
-                        >
-                          <FaVolumeUp className="text-green-600" />
-                          <span>Test Sound</span>
-                        </button>
-                      </>
+                      <button
+                        onClick={() => setSoundEnabled(!soundEnabled)}
+                        className="flex items-center space-x-2 w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      >
+                        {soundEnabled ? <FaVolumeUp /> : <FaVolumeMute />}
+                        <span>{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
+                      </button>
                     )}
                     <button
                       onClick={handleLogout}
