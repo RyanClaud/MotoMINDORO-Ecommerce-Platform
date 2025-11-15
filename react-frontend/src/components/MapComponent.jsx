@@ -33,7 +33,7 @@ const motorcycleShopIcon = new Icon({
 });
 
 const vulcanizingShopIcon = new Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png',
   shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -825,7 +825,7 @@ const MapComponent = ({ stores = [] }) => {
                 <div className="mb-2">
                   <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
                     store.shop_type === 'motorcycle_shop' ? 'bg-blue-100 text-blue-800' :
-                    store.shop_type === 'vulcanizing_shop' ? 'bg-orange-100 text-orange-800' :
+                    store.shop_type === 'vulcanizing_shop' ? 'bg-yellow-100 text-yellow-800' :
                     'bg-red-100 text-red-800'
                   }`}>
                     {store.shop_type === 'motorcycle_shop' ? '🏍️ Motorcycle Shop' :

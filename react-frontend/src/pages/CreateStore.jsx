@@ -8,6 +8,7 @@ const CreateStore = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    shop_type: 'motorcycle_shop',
     address: '',
     city: '',
     state: '',
@@ -142,6 +143,21 @@ const CreateStore = () => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 placeholder="e.g., Premium Motorcycles LA"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Shop Type *</label>
+              <select
+                name="shop_type"
+                value={formData.shop_type}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              >
+                <option value="motorcycle_shop">🏍️ Motorcycle Shop</option>
+                <option value="vulcanizing_shop">🔧 Vulcanizing Shop</option>
+                <option value="gasoline_station">⛽ Gas Station</option>
+              </select>
             </div>
 
             <div>

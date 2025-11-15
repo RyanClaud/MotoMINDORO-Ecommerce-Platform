@@ -22,7 +22,7 @@ const StoreCard = ({ store }) => {
             <div className="mb-2">
               <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
                 store.shop_type === 'motorcycle_shop' ? 'bg-blue-100 text-blue-800' :
-                store.shop_type === 'vulcanizing_shop' ? 'bg-orange-100 text-orange-800' :
+                store.shop_type === 'vulcanizing_shop' ? 'bg-yellow-100 text-yellow-800' :
                 'bg-red-100 text-red-800'
               }`}>
                 {store.shop_type === 'motorcycle_shop' ? '🏍️ Motorcycle Shop' :

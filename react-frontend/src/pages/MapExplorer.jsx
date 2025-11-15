@@ -275,7 +275,7 @@ const MapExplorer = () => {
               <span className="text-sm text-gray-700">🏍️ Motorcycle Shops</span>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-6 h-6 bg-orange-600 rounded-full"></div>
+              <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
               <span className="text-sm text-gray-700">🔧 Vulcanizing Shops</span>
             </div>
             <div className="flex items-center space-x-3">
