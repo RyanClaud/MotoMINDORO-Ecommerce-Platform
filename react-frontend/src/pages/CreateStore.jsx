@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { FaCrosshairs, FaMapMarkerAlt, FaStore, FaCheckCircle, FaImage } from 'react-icons/fa';
+import { FaCrosshairs, FaMapMarkerAlt, FaStore, FaCheckCircle, FaImage, FaQuestionCircle, FaTimes } from 'react-icons/fa';
 
 const CreateStore = () => {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const CreateStore = () => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showLocationHelp, setShowLocationHelp] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -259,9 +260,21 @@ const CreateStore = () => {
             {/* Geolocation Section */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-2 border-blue-200">
               <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">GPS Coordinates *</h3>
-                  <p className="text-sm text-gray-600">Use your current location or enter manually</p>
+                <div className="flex items-center space-x-3">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center space-x-2">
+                      <span>GPS Coordinates *</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowLocationHelp(true)}
+                        className="text-blue-600 hover:text-blue-700 transition-colors"
+                        title="What are GPS coordinates?"
+                      >
+                        <FaQuestionCircle className="text-lg" />
+                      </button>
+                    </h3>
+                    <p className="text-sm text-gray-600">Use your current location or enter manually</p>
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -281,6 +294,22 @@ const CreateStore = () => {
                     </>
                   )}
                 </button>
+              </div>
+
+              {/* Help Text */}
+              <div className="mb-4 p-4 bg-white rounded-lg border border-blue-200">
+                <p className="text-sm text-gray-700">
+                  <span className="font-semibold text-blue-600">💡 Tip:</span> Click "Get My Location" button above to automatically fill in your coordinates, or{' '}
+                  <a 
+                    href="https://www.google.com/maps" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-700 font-semibold underline"
+                  >
+                    find them on Google Maps
+                  </a>
+                  {' '}(right-click on your location → click the coordinates to copy).
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,6 +417,142 @@ const CreateStore = () => {
           </ul>
         </div>
       </div>
+
+      {/* Location Help Modal */}
+      {showLocationHelp && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slide-up">
+            {/* Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-3xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <FaMapMarkerAlt className="text-3xl" />
+                  <h2 className="text-2xl font-bold">How to Get GPS Coordinates</h2>
+                </div>
+                <button
+                  onClick={() => setShowLocationHelp(false)}
+                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-xl transition-all"
+                >
+                  <FaTimes className="text-2xl" />
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* What are GPS Coordinates */}
+              <div className="bg-blue-50 rounded-xl p-5 border-2 border-blue-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">📍 What are GPS Coordinates?</h3>
+                <p className="text-gray-700">
+                  GPS coordinates are numbers that show the exact location of your store on Earth. They consist of two numbers:
+                </p>
+                <ul className="mt-3 space-y-2 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="font-bold text-blue-600 mr-2">Latitude:</span>
+                    <span>How far north or south (e.g., 13.4117)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-blue-600 mr-2">Longitude:</span>
+                    <span>How far east or west (e.g., 121.1803)</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Method 1: Automatic */}
+              <div className="bg-green-50 rounded-xl p-5 border-2 border-green-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">✨ Method 1: Automatic (Easiest)</h3>
+                <ol className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="font-bold text-green-600 mr-2 min-w-[24px]">1.</span>
+                    <span>Click the <span className="font-semibold">"Get My Location"</span> button</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-green-600 mr-2 min-w-[24px]">2.</span>
+                    <span>Allow your browser to access your location when prompted</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-green-600 mr-2 min-w-[24px]">3.</span>
+                    <span>Coordinates will be filled automatically! ✓</span>
+                  </li>
+                </ol>
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    <span className="font-semibold">⚠️ Note:</span> Make sure you're physically at your store location when using this method.
+                  </p>
+                </div>
+              </div>
+
+              {/* Method 2: Google Maps */}
+              <div className="bg-purple-50 rounded-xl p-5 border-2 border-purple-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">🗺️ Method 2: Using Google Maps</h3>
+                <ol className="space-y-3 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="font-bold text-purple-600 mr-2 min-w-[24px]">1.</span>
+                    <div>
+                      <span>Open </span>
+                      <a 
+                        href="https://www.google.com/maps" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 font-semibold underline"
+                      >
+                        Google Maps
+                      </a>
+                    </div>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-purple-600 mr-2 min-w-[24px]">2.</span>
+                    <span>Search for your store address or zoom to your location</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-purple-600 mr-2 min-w-[24px]">3.</span>
+                    <span><span className="font-semibold">Right-click</span> on the exact location of your store</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-purple-600 mr-2 min-w-[24px]">4.</span>
+                    <span>Click on the coordinates that appear (they look like: 13.4117, 121.1803)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="font-bold text-purple-600 mr-2 min-w-[24px]">5.</span>
+                    <span>The coordinates are now copied! Paste them into the form</span>
+                  </li>
+                </ol>
+                
+                {/* Visual Example */}
+                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-purple-300">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">Example coordinates:</p>
+                  <div className="font-mono text-sm bg-gray-100 p-3 rounded-lg">
+                    <div className="text-blue-600">Latitude: <span className="text-gray-900">13.4117</span></div>
+                    <div className="text-blue-600">Longitude: <span className="text-gray-900">121.1803</span></div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    (These are sample coordinates for Calapan City, Oriental Mindoro)
+                  </p>
+                </div>
+              </div>
+
+              {/* Why Important */}
+              <div className="bg-orange-50 rounded-xl p-5 border-2 border-orange-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-2">🎯 Why are coordinates important?</h3>
+                <ul className="space-y-2 text-gray-700">
+                  <li>• Helps customers find your store easily on the map</li>
+                  <li>• Enables accurate navigation and directions</li>
+                  <li>• Shows your store in nearby searches</li>
+                  <li>• Required for the "Find Nearby Stores" feature</li>
+                </ul>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowLocationHelp(false)}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                Got it! Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
