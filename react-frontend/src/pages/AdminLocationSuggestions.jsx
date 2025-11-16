@@ -33,7 +33,7 @@ const AdminLocationSuggestions = () => {
 
   const fetchSuggestions = async () => {
     try {
-      const response = await api.get('/location-suggestions');
+      const response = await api.get('/admin/location-suggestions');
       setSuggestions(response.data.data || []);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
@@ -65,7 +65,7 @@ const AdminLocationSuggestions = () => {
 
     setProcessing(true);
     try {
-      await api.post(`/location-suggestions/${id}/approve`, { admin_notes: adminNotes });
+      await api.put(`/admin/location-suggestions/${id}/approve`, { admin_notes: adminNotes });
       alert('Location approved and store created successfully!');
       setSelectedSuggestion(null);
       setAdminNotes('');
@@ -82,7 +82,7 @@ const AdminLocationSuggestions = () => {
 
     setProcessing(true);
     try {
-      await api.post(`/location-suggestions/${id}/reject`, { admin_notes: adminNotes });
+      await api.put(`/admin/location-suggestions/${id}/reject`, { admin_notes: adminNotes });
       alert('Location suggestion rejected');
       setSelectedSuggestion(null);
       setAdminNotes('');
