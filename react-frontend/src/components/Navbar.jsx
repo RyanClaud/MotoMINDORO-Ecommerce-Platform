@@ -15,6 +15,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [previousCount, setPreviousCount] = useState(0);
+  const [pendingStoresCount, setPendingStoresCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('notificationSoundEnabled');
     return saved !== null ? JSON.parse(saved) : true;
@@ -102,6 +103,28 @@ const Navbar = () => {
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, [user, previousCount, soundEnabled]);
+
+  // Fetch pending stores count for admins
+  useEffect(() => {
+    const fetchPendingStores = async () => {
+      if (user && user.role === 'admin') {
+        try {
+          const response = await api.get('/admin/analytics');
+          if (response.data.success) {
+            setPendingStoresCount(response.data.data.totals.pending_stores || 0);
+          }
+        } catch (error) {
+          console.error('Error fetching pending stores:', error);
+        }
+      }
+    };
+
+    fetchPendingStores();
+    
+    // Poll every 60 seconds for admins
+    const interval = setInterval(fetchPendingStores, 60000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const handleLogout = async () => {
     await logout();
@@ -195,9 +218,14 @@ const Navbar = () => {
                 )}
                 <Link 
                   to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'}
-                  className="px-4 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium"
+                  className="relative px-4 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium"
                 >
                   {user.role === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
+                  {user.role === 'admin' && pendingStoresCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                      {pendingStoresCount}
+                    </span>
+                  )}
                 </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium">

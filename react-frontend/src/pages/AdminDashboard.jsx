@@ -86,6 +86,42 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* Pending Stores Notification Banner */}
+        {totals.pending_stores > 0 && (
+          <div className="mb-6 animate-slide-up">
+            <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-2xl shadow-2xl p-1">
+              <div className="bg-white rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-4 rounded-xl animate-pulse">
+                        <FaStore className="text-3xl text-white" />
+                      </div>
+                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center animate-bounce">
+                        {totals.pending_stores}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {totals.pending_stores} Store{totals.pending_stores > 1 ? 's' : ''} Awaiting Approval
+                      </h3>
+                      <p className="text-gray-600 mt-1">
+                        New store submissions need your review
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => navigate('/admin/stores')}
+                    className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-yellow-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Review Now →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Premium Stats Grid with Glass Morphism */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Users Card - Premium Design */}
