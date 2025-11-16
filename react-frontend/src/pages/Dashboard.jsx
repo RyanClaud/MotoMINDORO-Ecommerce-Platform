@@ -168,30 +168,82 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Enhanced Header with Gradient */}
-        <div className="mb-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-3xl blur-3xl"></div>
-          <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-8 border border-white/20">
+        {/* Premium Header with Gradient Background */}
+        <div className="mb-8 relative overflow-hidden">
+          {/* Animated Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCA0LTEuNzkgNC00em0wLTEwYzAtMi4yMS0xLjc5LTQtNC00cy00IDEuNzktNCA0IDEuNzkgNCA0IDQgNC0xLjc5IDQtNHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+          
+          {/* Content */}
+          <div className="relative p-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-5xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3">
+                <h1 className="text-5xl font-black text-white mb-3 drop-shadow-lg">
                   Dashboard
                 </h1>
-                <p className="text-lg text-gray-600">
-                  Welcome back, <span className="font-bold text-blue-600">{user?.name}</span>! 👋
+                <p className="text-xl text-white/90">
+                  Welcome back, <span className="font-black text-white">{user?.name}</span>! 👋
                 </p>
               </div>
-              <div className="hidden md:flex items-center space-x-4">
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Account Type</p>
-                  <p className="text-xl font-bold text-gray-900 capitalize">{user?.role}</p>
+              <div className="hidden md:flex items-center space-x-6">
+                <div className="text-right bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                  <p className="text-sm text-white/70 font-semibold">Account Type</p>
+                  <p className="text-2xl font-black text-white capitalize">{user?.role}</p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-3xl text-white font-black">{user?.name?.charAt(0).toUpperCase()}</span>
+                <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-2xl border-4 border-white/30">
+                  <span className="text-4xl text-white font-black">{user?.name?.charAt(0).toUpperCase()}</span>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Quick Stats Cards - For All Users */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* My Stores Card */}
+          <Link to="/stores/create" className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 hover:-translate-y-2">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+                  <FaStore className="text-4xl text-white" />
+                </div>
+                <span className="text-6xl font-black text-white">{myStores.length || 0}</span>
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2">My Stores</h3>
+              <p className="text-white/80 text-sm font-medium">View Stores →</p>
+            </div>
+          </Link>
+
+          {/* My Listings Card */}
+          <Link to="/listings/create" className="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 hover:-translate-y-2">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+                  <FaMotorcycle className="text-4xl text-white" />
+                </div>
+                <span className="text-6xl font-black text-white">{myListings.length || 0}</span>
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2">My Listings</h3>
+              <p className="text-white/80 text-sm font-medium">View Listings →</p>
+            </div>
+          </Link>
+
+          {/* Favorites Card */}
+          <Link to="/favorites" className="group relative overflow-hidden bg-gradient-to-br from-pink-500 to-red-500 rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-300 hover:-translate-y-2">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+                  <FaUsers className="text-4xl text-white" />
+                </div>
+                <span className="text-6xl font-black text-white">0</span>
+              </div>
+              <h3 className="text-2xl font-black text-white mb-2">Favorites</h3>
+              <p className="text-white/80 text-sm font-medium">View Favorites →</p>
+            </div>
+          </Link>
         </div>
 
         {/* Buyer Dashboard Content - Moved Up */}
