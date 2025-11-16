@@ -1,0 +1,39 @@
+🏍️ MotoMINDORO PWA - Quick Start
+================================
+
+📋 3 SIMPLE STEPS:
+
+1. GENERATE ICONS
+   → Open: http://localhost:5173/generate-logo-icons.html
+   → Click "Generate PWA Icons"
+   → Download: pwa-192x192.png & pwa-512x512.png
+
+2. MOVE FILES
+   → Place both PNG files in: react-frontend/public/
+
+3. RESTART SERVER
+   → Stop server (Ctrl+C)
+   → Run: npm run dev
+
+✅ DONE! Your PWA is ready!
+
+📱 TEST IT:
+   Desktop: Look for install icon in address bar
+   Mobile: Menu → "Add to Home Screen"
+
+🎨 YOUR LOGO:
+   ✓ Already configured as app icon
+   ✓ Shows on home screen
+   ✓ Appears in splash screen
+   ✓ Professional branding
+
+📖 Full Guide: See PWA_LOGO_SETUP.md
+
+🆘 Issues? Check:
+   - Icons in public/ folder?
+   - Server restarted?
+   - Browser cache cleared?
+   - HTTPS in production?
+
+================================
+MotoMINDORO - Ride with Pride! 🏍️

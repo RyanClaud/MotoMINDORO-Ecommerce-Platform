@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   FaMotorcycle, FaUser, FaEnvelope, FaLock, FaArrowRight, 
-  FaShoppingCart, FaStore, FaCheckCircle 
+  FaShoppingCart, FaStore, FaCheckCircle, FaQuestionCircle, FaShieldAlt
 } from 'react-icons/fa';
 
 const Register = () => {
@@ -13,7 +13,28 @@ const Register = () => {
     password: '',
     password_confirmation: '',
     role: 'buyer',
+    security_question_1: '',
+    security_answer_1: '',
+    security_question_2: '',
+    security_answer_2: '',
   });
+
+  const securityQuestions = {
+    set1: [
+      "What city were you born in?",
+      "What is your mother's maiden name?",
+      "What was the name of your first pet?",
+      "What is your favorite motorcycle brand?",
+      "What was your first motorcycle model?",
+    ],
+    set2: [
+      "What is your father's middle name?",
+      "In what city did you meet your spouse/partner?",
+      "What is the name of your favorite childhood friend?",
+      "What street did you live on in third grade?",
+      "What is your oldest sibling's middle name?",
+    ]
+  };
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -40,6 +61,21 @@ const Register = () => {
       return;
     }
 
+    if (!formData.security_question_1 || !formData.security_answer_1) {
+      setError('Please select and answer the first security question');
+      return;
+    }
+
+    if (!formData.security_question_2 || !formData.security_answer_2) {
+      setError('Please select and answer the second security question');
+      return;
+    }
+
+    if (formData.security_question_1 === formData.security_question_2) {
+      setError('Please select different security questions');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -48,7 +84,11 @@ const Register = () => {
         formData.email,
         formData.password,
         formData.password_confirmation,
-        formData.role
+        formData.role,
+        formData.security_question_1,
+        formData.security_answer_1,
+        formData.security_question_2,
+        formData.security_answer_2
       );
       navigate('/dashboard');
     } catch (err) {
@@ -70,17 +110,34 @@ const Register = () => {
       <div className="max-w-6xl w-full flex flex-col lg:flex-row-reverse items-center gap-12 relative z-10">
         {/* Right Side - Branding */}
         <div className="flex-1 text-center lg:text-left animate-fade-in-right">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-2xl mb-6 animate-bounce-slow">
-            <FaMotorcycle className="text-4xl text-white" />
+          {/* Hero Logo with Glow Effect */}
+          <div className="relative inline-flex items-center justify-center mb-8">
+            {/* Animated Glow Rings */}
+            <div className="absolute inset-0 animate-pulse-slow">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-full blur-3xl opacity-30"></div>
+            </div>
+            <div className="absolute inset-0 animate-spin-slow">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-2xl opacity-20"></div>
+            </div>
+            
+            {/* Logo */}
+            <div className="relative animate-float">
+              <img 
+                src="/motomindoro_logo.png" 
+                alt="MotoMindoro Logo" 
+                className="w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
+
           <h1 className="text-5xl lg:text-6xl font-black text-gray-900 mb-4 leading-tight">
             Join
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 animate-gradient">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 animate-gradient">
               MotoMindoro
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            Start your journey in the Philippines' most trusted motorcycle marketplace
+            Start your journey in Oriental Mindoro's most trusted motorcycle marketplace
           </p>
           
           {/* Benefits */}
@@ -217,8 +274,91 @@ const Register = () => {
                 </div>
               </div>
 
+              {/* Security Questions Section */}
+              <div className="space-y-4 pt-4 border-t-2 border-gray-200">
+                <div className="flex items-center space-x-2 mb-4">
+                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl">
+                    <FaShieldAlt className="text-white text-lg" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900">Security Questions</h3>
+                    <p className="text-xs text-gray-600">For password recovery</p>
+                  </div>
+                </div>
+
+                {/* Question 1 */}
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <FaQuestionCircle className="inline mr-2 text-blue-600" />
+                    Security Question 1
+                  </label>
+                  <select
+                    name="security_question_1"
+                    value={formData.security_question_1}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all hover:border-gray-300"
+                    required
+                  >
+                    <option value="">Select a question...</option>
+                    {securityQuestions.set1.map((question, index) => (
+                      <option key={index} value={question}>{question}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Answer
+                  </label>
+                  <input
+                    type="text"
+                    name="security_answer_1"
+                    value={formData.security_answer_1}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all hover:border-gray-300"
+                    placeholder="Your answer"
+                    required
+                  />
+                </div>
+
+                {/* Question 2 */}
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <FaQuestionCircle className="inline mr-2 text-blue-600" />
+                    Security Question 2
+                  </label>
+                  <select
+                    name="security_question_2"
+                    value={formData.security_question_2}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all hover:border-gray-300"
+                    required
+                  >
+                    <option value="">Select a question...</option>
+                    {securityQuestions.set2.map((question, index) => (
+                      <option key={index} value={question}>{question}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Answer
+                  </label>
+                  <input
+                    type="text"
+                    name="security_answer_2"
+                    value={formData.security_answer_2}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all hover:border-gray-300"
+                    placeholder="Your answer"
+                    required
+                  />
+                </div>
+              </div>
+
               {/* Role Selection */}
-              <div>
+              <div className="pt-4 border-t-2 border-gray-200">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   I want to
                 </label>
@@ -383,6 +523,35 @@ const Register = () => {
           }
         }
 
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-20px) rotate(-2deg);
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+          }
+        }
+
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
         @keyframes shake {
           0%, 100% {
             transform: translateX(0);
@@ -440,6 +609,18 @@ const Register = () => {
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 3s ease infinite;
+        }
+
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
         }
       `}</style>
     </div>

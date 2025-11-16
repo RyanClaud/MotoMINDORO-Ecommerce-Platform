@@ -258,7 +258,7 @@ const AdminListings = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-sm text-gray-500">Price</p>
-                    <p className="text-2xl font-bold text-green-600">₱{listing.price.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-green-600">₱{parseFloat(listing.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-500">Year</p>

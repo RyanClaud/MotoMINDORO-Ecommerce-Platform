@@ -287,106 +287,141 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Account Information */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <FaUser className="mr-3 text-blue-600" />
-                Account Information
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-500 mb-1">Full Name</p>
-                  <p className="text-lg font-semibold text-gray-900">{user?.name}</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-500 mb-1">Email Address</p>
-                  <p className="text-lg font-semibold text-gray-900 break-all">{user?.email}</p>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-500 mb-1">Account Type</p>
-                  <div className="flex items-center space-x-2">
-                    {getRoleIcon(user?.role)}
-                    <p className="text-lg font-semibold text-gray-900 capitalize">{user?.role}</p>
+            {/* Account Information - Enhanced */}
+            <div className="group relative bg-white rounded-3xl shadow-xl p-1 overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative bg-white rounded-3xl p-8">
+                <div className="flex items-center space-x-3 mb-8">
+                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <FaUser className="text-2xl text-white" />
                   </div>
+                  <h2 className="text-3xl font-black text-gray-900">Account Information</h2>
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-500 mb-1">Member Since</p>
-                  <p className="text-lg font-semibold text-gray-900">{formatDate(user?.created_at)}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="group/item relative bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border-2 border-blue-100 hover:border-blue-300 transition-all hover:shadow-lg">
+                    <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <p className="text-xs text-blue-600 font-bold mb-2 uppercase tracking-wider">Full Name</p>
+                    <p className="text-xl font-black text-gray-900">{user?.name}</p>
+                  </div>
+
+                  <div className="group/item relative bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-5 border-2 border-purple-100 hover:border-purple-300 transition-all hover:shadow-lg">
+                    <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <p className="text-xs text-purple-600 font-bold mb-2 uppercase tracking-wider">Email Address</p>
+                    <p className="text-xl font-black text-gray-900 break-all">{user?.email}</p>
+                  </div>
+
+                  <div className="group/item relative bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-5 border-2 border-green-100 hover:border-green-300 transition-all hover:shadow-lg">
+                    <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <p className="text-xs text-green-600 font-bold mb-2 uppercase tracking-wider">Account Type</p>
+                    <div className="flex items-center space-x-2">
+                      {getRoleIcon(user?.role)}
+                      <p className="text-xl font-black text-gray-900 capitalize">{user?.role}</p>
+                    </div>
+                  </div>
+
+                  <div className="group/item relative bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-5 border-2 border-orange-100 hover:border-orange-300 transition-all hover:shadow-lg">
+                    <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <p className="text-xs text-orange-600 font-bold mb-2 uppercase tracking-wider">Member Since</p>
+                    <p className="text-xl font-black text-gray-900">{formatDate(user?.created_at)}</p>
+                  </div>
+
+                  {user?.phone && (
+                    <div className="group/item relative bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-5 border-2 border-cyan-100 hover:border-cyan-300 transition-all hover:shadow-lg">
+                      <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                        <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <p className="text-xs text-cyan-600 font-bold mb-2 uppercase tracking-wider">Phone Number</p>
+                      <p className="text-xl font-black text-gray-900">{user.phone}</p>
+                    </div>
+                  )}
+
+                  {user?.address && (
+                    <div className="group/item relative bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-5 border-2 border-red-100 hover:border-red-300 transition-all hover:shadow-lg md:col-span-2">
+                      <div className="absolute top-3 right-3 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <p className="text-xs text-red-600 font-bold mb-2 uppercase tracking-wider">Address</p>
+                      <p className="text-xl font-black text-gray-900">{user.address}</p>
+                    </div>
+                  )}
                 </div>
-
-                {user?.phone && (
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-sm text-gray-500 mb-1">Phone Number</p>
-                    <p className="text-lg font-semibold text-gray-900">{user.phone}</p>
-                  </div>
-                )}
-
-                {user?.address && (
-                  <div className="bg-gray-50 rounded-xl p-4 md:col-span-2">
-                    <p className="text-sm text-gray-500 mb-1">Address</p>
-                    <p className="text-lg font-semibold text-gray-900">{user.address}</p>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Recent Activity */}
+            {/* Recent Activity - Enhanced */}
             {recentActivity.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <FaStar className="mr-3 text-yellow-500" />
-                  Recent Activity
-                </h2>
+              <div className="group relative bg-white rounded-3xl shadow-xl p-1 overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="relative bg-white rounded-3xl p-8">
+                  <div className="flex items-center space-x-3 mb-8">
+                    <div className="bg-gradient-to-br from-yellow-500 to-orange-500 p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                      <FaStar className="text-2xl text-white" />
+                    </div>
+                    <h2 className="text-3xl font-black text-gray-900">Recent Activity</h2>
+                  </div>
 
-                <div className="space-y-4">
-                  {recentActivity.map((listing) => (
-                    <Link
-                      key={listing.id}
-                      to={`/listings/${listing.id}`}
-                      className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl hover:bg-blue-50 transition-all group"
-                    >
-                      <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                        {listing.primary_image?.image_path ? (
-                          <img
-                            src={`http://localhost:8000/storage/${listing.primary_image.image_path}`}
-                            alt={listing.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=No+Image'; }}
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <FaMotorcycle className="text-3xl text-gray-400" />
+                  <div className="space-y-4">
+                    {recentActivity.map((listing) => (
+                      <Link
+                        key={listing.id}
+                        to={`/listings/${listing.id}`}
+                        className="group/item relative flex items-center space-x-4 p-5 bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl hover:from-blue-50 hover:to-indigo-50 transition-all border-2 border-gray-100 hover:border-blue-300 hover:shadow-lg transform hover:-translate-y-1 duration-300"
+                      >
+                        <div className="w-24 h-24 bg-gray-200 rounded-2xl overflow-hidden flex-shrink-0 shadow-lg group-hover/item:scale-105 transition-transform">
+                          {listing.primary_image?.image_path ? (
+                            <img
+                              src={`http://localhost:8000/storage/${listing.primary_image.image_path}`}
+                              alt={listing.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=No+Image'; }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                              <FaMotorcycle className="text-4xl text-gray-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-black text-gray-900 group-hover/item:text-blue-600 transition-colors mb-2">
+                            {listing.title}
+                          </h3>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-xs font-bold">
+                              {listing.condition === 'brand_new' ? 'Brand New' : 'Second Hand'}
+                            </span>
+                            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-xs font-bold">
+                              {listing.year}
+                            </span>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {listing.title}
-                        </h3>
-                        <p className="text-sm text-gray-500">
-                          {listing.condition === 'brand_new' ? 'Brand New' : 'Second Hand'} • {listing.year}
-                        </p>
-                        <p className="text-lg font-bold text-blue-600 mt-1">
-                          ₱{listing.price.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="text-gray-400 group-hover:text-blue-600 transition-colors">
-                        →
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                          <p className="text-2xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            ₱{parseFloat(listing.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </p>
+                        </div>
+                        <div className="text-gray-400 group-hover/item:text-blue-600 transition-all transform group-hover/item:translate-x-2 text-2xl">
+                          →
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
 
-                <Link
-                  to="/dashboard"
-                  className="block mt-6 text-center text-blue-600 hover:text-blue-700 font-semibold"
-                >
-                  View All Activity →
-                </Link>
+                  <Link
+                    to="/dashboard"
+                    className="block mt-8 text-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    View All Activity →
+                  </Link>
+                </div>
               </div>
             )}
 
@@ -462,48 +497,71 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Account Status */}
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Account Status</h2>
+            {/* Account Status - Enhanced */}
+            <div className="group relative bg-white rounded-3xl shadow-xl p-1 overflow-hidden hover:shadow-2xl transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-400 via-emerald-400 to-teal-400 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
-                  <div className="flex items-center space-x-3">
-                    <FaCheckCircle className="text-green-600 text-xl" />
-                    <span className="font-semibold text-gray-900">Account Active</span>
+              <div className="relative bg-white rounded-3xl p-8">
+                <div className="flex items-center space-x-3 mb-8">
+                  <div className="bg-gradient-to-br from-green-600 to-emerald-600 p-3 rounded-2xl shadow-lg group-hover:scale-110 transition-transform">
+                    <FaCheckCircle className="text-2xl text-white" />
                   </div>
-                  <span className="text-green-600 font-bold">✓</span>
+                  <h2 className="text-3xl font-black text-gray-900">Account Status</h2>
                 </div>
+                
+                <div className="space-y-4">
+                  <div className="group/item relative flex items-center justify-between p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 hover:border-green-400 transition-all hover:shadow-lg transform hover:-translate-y-1">
+                    <div className="flex items-center space-x-4">
+                      <div className="bg-green-500 p-3 rounded-xl group-hover/item:scale-110 transition-transform">
+                        <FaCheckCircle className="text-white text-2xl" />
+                      </div>
+                      <span className="text-lg font-black text-gray-900">Account Active</span>
+                    </div>
+                    <div className="bg-green-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
+                      ✓
+                    </div>
+                  </div>
 
-                {user?.email_verified_at ? (
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
-                    <div className="flex items-center space-x-3">
-                      <FaCheckCircle className="text-green-600 text-xl" />
-                      <span className="font-semibold text-gray-900">Email Verified</span>
+                  {user?.email_verified_at ? (
+                    <div className="group/item relative flex items-center justify-between p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 hover:border-blue-400 transition-all hover:shadow-lg transform hover:-translate-y-1">
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-blue-500 p-3 rounded-xl group-hover/item:scale-110 transition-transform">
+                          <FaCheckCircle className="text-white text-2xl" />
+                        </div>
+                        <span className="text-lg font-black text-gray-900">Email Verified</span>
+                      </div>
+                      <div className="bg-blue-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
+                        ✓
+                      </div>
                     </div>
-                    <span className="text-green-600 font-bold">✓</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-xl">
-                    <div className="flex items-center space-x-3">
-                      <FaEnvelope className="text-yellow-600 text-xl" />
-                      <span className="font-semibold text-gray-900">Email Not Verified</span>
+                  ) : (
+                    <div className="group/item relative flex items-center justify-between p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200 hover:border-yellow-400 transition-all hover:shadow-lg transform hover:-translate-y-1">
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-yellow-500 p-3 rounded-xl group-hover/item:scale-110 transition-transform">
+                          <FaEnvelope className="text-white text-2xl" />
+                        </div>
+                        <span className="text-lg font-black text-gray-900">Email Not Verified</span>
+                      </div>
+                      <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                        Verify Now
+                      </button>
                     </div>
-                    <button className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
-                      Verify Now
-                    </button>
-                  </div>
-                )}
+                  )}
 
-                {user?.role === 'seller' && (
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
-                    <div className="flex items-center space-x-3">
-                      <FaStore className="text-blue-600 text-xl" />
-                      <span className="font-semibold text-gray-900">Seller Account</span>
+                  {user?.role === 'seller' && (
+                    <div className="group/item relative flex items-center justify-between p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-200 hover:border-purple-400 transition-all hover:shadow-lg transform hover:-translate-y-1">
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-purple-500 p-3 rounded-xl group-hover/item:scale-110 transition-transform">
+                          <FaStore className="text-white text-2xl" />
+                        </div>
+                        <span className="text-lg font-black text-gray-900">Seller Account</span>
+                      </div>
+                      <div className="bg-purple-500 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl shadow-lg">
+                        ✓
+                      </div>
                     </div>
-                    <span className="text-blue-600 font-bold">✓</span>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Icon Checker - MotoMINDORO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        .section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            border-left: 4px solid #2563eb;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .icon-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .icon-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .icon-item p {
+            margin: 0.5rem 0;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .instructions {
+            background: #eff6ff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .instructions ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        .instructions li {
+            margin: 0.5rem 0;
+        }
+        code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏍️ MotoMINDORO PWA Icon Checker</h1>
+        
+        <div class="section">
+            <h2>📱 Current PWA Icons</h2>
+            <div class="icon-grid">
+                <div class="icon-item">
+                    <img src="/pwa-192x192.png?v=2" alt="192x192 Icon" id="icon192">
+                    <p><strong>192x192</strong></p>
+                    <p id="status192">Loading...</p>
+                </div>
+                <div class="icon-item">
+                    <img src="/pwa-512x512.png?v=2" alt="512x512 Icon" id="icon512" style="max-width: 200px;">
+                    <p><strong>512x512</strong></p>
+                    <p id="status512">Loading...</p>
+                </div>
+                <div class="icon-item">
+                    <img src="/motomindoro_logo.png" alt="Original Logo" style="max-width: 200px;">
+                    <p><strong>Original Logo</strong></p>
+                    <p class="status success">✓ Loaded</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Quick Actions</h2>
+            <button class="btn" onclick="clearCache()">Clear Cache & Reload</button>
+            <button class="btn" onclick="checkManifest()">Check Manifest</button>
+            <button class="btn" onclick="window.location.href='/generate-logo-icons.html'">Regenerate Icons</button>
+        </div>
+
+        <div class="section">
+            <h2>📋 Troubleshooting Steps</h2>
+            <div class="instructions">
+                <p><strong>If you still see old icons:</strong></p>
+                <ol>
+                    <li><strong>Hard Refresh:</strong> Press <code>Ctrl + Shift + R</code> (Windows) or <code>Cmd + Shift + R</code> (Mac)</li>
+                    <li><strong>Clear Browser Cache:</strong>
+                        <ul>
+                            <li>Chrome: Settings → Privacy → Clear browsing data → Cached images</li>
+                            <li>Or press <code>Ctrl + Shift + Delete</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Uninstall PWA:</strong> If already installed, uninstall the app and reinstall</li>
+                    <li><strong>Check Files:</strong> Verify <code>pwa-192x192.png</code> and <code>pwa-512x512.png</code> are in <code>public/</code> folder</li>
+                    <li><strong>Restart Server:</strong> Stop (Ctrl+C) and restart: <code>npm run dev</code></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✅ Verification Checklist</h2>
+            <div id="checklist">
+                <p>⏳ Checking...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if icons load
+        document.getElementById('icon192').onload = function() {
+            document.getElementById('status192').innerHTML = '<span class="status success">✓ Loaded</span>';
+        };
+        document.getElementById('icon192').onerror = function() {
+            document.getElementById('status192').innerHTML = '<span class="status error">✗ Failed</span>';
+        };
+
+        document.getElementById('icon512').onload = function() {
+            document.getElementById('status512').innerHTML = '<span class="status success">✓ Loaded</span>';
+        };
+        document.getElementById('icon512').onerror = function() {
+            document.getElementById('status512').innerHTML = '<span class="status error">✗ Failed</span>';
+        };
+
+        function clearCache() {
+            if (confirm('This will clear cache and reload the page. Continue?')) {
+                // Clear service worker cache
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+                }
+                
+                // Clear cache storage
+                if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+                
+                // Hard reload
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 500);
+            }
+        }
+
+        function checkManifest() {
+            fetch('/manifest.json')
+                .then(response => response.json())
+                .then(data => {
+                    alert('Manifest loaded successfully!\n\nApp Name: ' + data.name + '\nIcons: ' + data.icons.length + ' configured');
+                    console.log('Manifest:', data);
+                })
+                .catch(error => {
+                    alert('Error loading manifest: ' + error.message);
+                });
+        }
+
+        // Run verification checklist
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const checks = [];
+                
+                // Check if icons loaded
+                const icon192 = document.getElementById('icon192');
+                const icon512 = document.getElementById('icon512');
+                
+                checks.push({
+                    name: '192x192 Icon',
+                    status: icon192.complete && icon192.naturalHeight !== 0
+                });
+                
+                checks.push({
+                    name: '512x512 Icon',
+                    status: icon512.complete && icon512.naturalHeight !== 0
+                });
+                
+                // Check manifest
+                fetch('/manifest.json')
+                    .then(response => response.ok)
+                    .then(ok => {
+                        checks.push({
+                            name: 'Manifest File',
+                            status: ok
+                        });
+                        displayChecklist(checks);
+                    })
+                    .catch(() => {
+                        checks.push({
+                            name: 'Manifest File',
+                            status: false
+                        });
+                        displayChecklist(checks);
+                    });
+            }, 1000);
+        });
+
+        function displayChecklist(checks) {
+            const checklist = document.getElementById('checklist');
+            let html = '<ul style="list-style: none; padding: 0;">';
+            
+            checks.forEach(check => {
+                const icon = check.status ? '✅' : '❌';
+                const statusClass = check.status ? 'success' : 'error';
+                html += `<li style="margin: 0.5rem 0;">
+                    ${icon} <strong>${check.name}:</strong> 
+                    <span class="status ${statusClass}">${check.status ? 'OK' : 'Failed'}</span>
+                </li>`;
+            });
+            
+            html += '</ul>';
+            checklist.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

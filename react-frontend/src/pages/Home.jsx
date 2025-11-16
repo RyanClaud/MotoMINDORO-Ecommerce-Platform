@@ -172,41 +172,50 @@ const Home = () => {
                 title: 'Verified Sellers',
                 description: 'All sellers are verified for your safety and peace of mind',
                 color: 'from-blue-500 to-indigo-500',
-                bgColor: 'bg-blue-50'
+                bgColor: 'from-blue-50 to-indigo-50'
               },
               {
                 icon: FaDollarSign,
                 title: 'Best Prices',
                 description: 'Competitive pricing with negotiable options available',
                 color: 'from-green-500 to-emerald-500',
-                bgColor: 'bg-green-50'
+                bgColor: 'from-green-50 to-emerald-50'
               },
               {
                 icon: FaMapMarkedAlt,
                 title: 'Location-Based',
                 description: 'Find motorcycles and stores near your location',
                 color: 'from-purple-500 to-pink-500',
-                bgColor: 'bg-purple-50'
+                bgColor: 'from-purple-50 to-pink-50'
               },
               {
                 icon: FaHeart,
                 title: 'Save Favorites',
                 description: 'Bookmark your favorite motorcycles for later viewing',
                 color: 'from-red-500 to-orange-500',
-                bgColor: 'bg-red-50'
+                bgColor: 'from-red-50 to-orange-50'
               }
             ].map((feature, index) => (
               <div
                 key={index}
-                className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+                className="group relative bg-white rounded-3xl shadow-xl p-1 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl overflow-hidden"
               >
-                <div className={`absolute inset-0 ${feature.bgColor} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                <div className="relative z-10">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg`}>
-                    <feature.icon className="text-3xl text-white" />
+                {/* Gradient Border Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                {/* Inner Card */}
+                <div className="relative bg-white rounded-3xl p-8 h-full">
+                  {/* Decorative Background */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgColor} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full -mr-16 -mt-16 opacity-20 group-hover:scale-150 transition-transform duration-700"></div>
+                  
+                  <div className="relative z-10">
+                    <div className={`w-20 h-20 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-2xl`}>
+                      <feature.icon className="text-4xl text-white" />
+                    </div>
+                    <h3 className="text-2xl font-black text-gray-900 mb-4">{feature.title}</h3>
+                    <p className="text-gray-600 leading-relaxed font-medium">{feature.description}</p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -324,27 +333,39 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section - Enhanced */}
       <section className="py-20 bg-white observe-animation opacity-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { number: '10,000+', label: 'Motorcycles Listed', icon: FaMotorcycle },
-              { number: '5,000+', label: 'Happy Customers', icon: FaHeart },
-              { number: '500+', label: 'Verified Stores', icon: FaStore },
-              { number: '4.8/5', label: 'Average Rating', icon: FaStar }
+              { number: '10,000+', label: 'Motorcycles Listed', icon: FaMotorcycle, color: 'from-blue-500 to-indigo-600', bgColor: 'from-blue-50 to-indigo-50' },
+              { number: '5,000+', label: 'Happy Customers', icon: FaHeart, color: 'from-red-500 to-pink-600', bgColor: 'from-red-50 to-pink-50' },
+              { number: '500+', label: 'Verified Stores', icon: FaStore, color: 'from-green-500 to-emerald-600', bgColor: 'from-green-50 to-emerald-50' },
+              { number: '4.8/5', label: 'Average Rating', icon: FaStar, color: 'from-yellow-500 to-orange-600', bgColor: 'from-yellow-50 to-orange-50' }
             ].map((stat, index) => (
               <div
                 key={index}
-                className="text-center group cursor-pointer"
+                className="group relative bg-white rounded-3xl shadow-xl p-1 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl overflow-hidden cursor-pointer"
               >
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-                  <stat.icon className="text-3xl text-white" />
+                {/* Gradient Border Effect */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                {/* Inner Card */}
+                <div className="relative bg-white rounded-3xl p-8 text-center h-full">
+                  {/* Decorative Background */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgColor} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full -mr-12 -mt-12 opacity-20 group-hover:scale-150 transition-transform duration-700"></div>
+                  
+                  <div className="relative z-10">
+                    <div className={`inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br ${stat.color} rounded-2xl mb-6 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-2xl`}>
+                      <stat.icon className="text-4xl text-white" />
+                    </div>
+                    <div className={`text-4xl md:text-5xl font-black mb-3 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent group-hover:scale-110 transition-transform`}>
+                      {stat.number}
+                    </div>
+                    <div className="text-gray-700 font-bold text-lg">{stat.label}</div>
+                  </div>
                 </div>
-                <div className="text-4xl md:text-5xl font-black text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-semibold">{stat.label}</div>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import NetworkStatus from './components/NetworkStatus';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import Search from './pages/Search';
 import ListingDetails from './pages/ListingDetails';
@@ -22,6 +23,7 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ContactUs from './pages/ContactUs';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminStores from './pages/AdminStores';
@@ -41,8 +43,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/contact" element={<ContactUs />} />
               <Route path="/search" element={<Search />} />
               <Route path="/listings/:id" element={<ListingDetails />} />
               <Route path="/stores/:id" element={<StoreDetails />} />

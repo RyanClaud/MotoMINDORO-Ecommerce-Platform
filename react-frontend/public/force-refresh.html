@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Force Refresh - MotoMINDORO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 { color: #333; margin-bottom: 1rem; }
+        .status { margin: 2rem 0; font-size: 1.2rem; }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        .btn:hover { opacity: 0.9; }
+        .instructions {
+            background: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        code {
+            background: #1f2937;
+            color: #10b981;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Force Refresh PWA</h1>
+        <div class="status" id="status">Click the button below to clear all caches</div>
+        
+        <button class="btn" onclick="forceClear()">🗑️ Clear Everything & Reload</button>
+        
+        <div class="instructions">
+            <h3>Manual Steps (if button doesn't work):</h3>
+            <ol>
+                <li><strong>Uninstall PWA:</strong> If you installed the app, uninstall it first</li>
+                <li><strong>Clear Site Data:</strong>
+                    <ul>
+                        <li>Press <code>F12</code> to open DevTools</li>
+                        <li>Go to <strong>Application</strong> tab</li>
+                        <li>Click <strong>Clear site data</strong></li>
+                    </ul>
+                </li>
+                <li><strong>Hard Refresh:</strong> Press <code>Ctrl + Shift + R</code></li>
+                <li><strong>Close & Reopen:</strong> Close all tabs and reopen</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        async function forceClear() {
+            const status = document.getElementById('status');
+            status.textContent = '🔄 Clearing caches...';
+            
+            try {
+                // 1. Unregister service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    status.textContent = '✓ Service workers cleared...';
+                }
+                
+                // 2. Clear cache storage
+                if ('caches' in window) {
+                    const names = await caches.keys();
+                    for (let name of names) {
+                        await caches.delete(name);
+                    }
+                    status.textContent = '✓ Cache storage cleared...';
+                }
+                
+                // 3. Clear local storage
+                localStorage.clear();
+                sessionStorage.clear();
+                status.textContent = '✓ Storage cleared...';
+                
+                // 4. Reload
+                status.textContent = '✓ Done! Reloading in 2 seconds...';
+                setTimeout(() => {
+                    window.location.href = '/?nocache=' + Date.now();
+                }, 2000);
+                
+            } catch (error) {
+                status.textContent = '❌ Error: ' + error.message;
+                console.error('Clear error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -558,7 +558,7 @@ const AdminDashboard = () => {
                       <p className="text-sm text-gray-600">{listing.store?.name}</p>
                     </td>
                     <td className="py-4 px-4">
-                      <p className="font-bold text-green-600">₱{listing.price.toLocaleString()}</p>
+                      <p className="font-bold text-green-600">₱{parseFloat(listing.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center">

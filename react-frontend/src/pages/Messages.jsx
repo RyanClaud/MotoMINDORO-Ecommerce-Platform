@@ -286,7 +286,7 @@ const Messages = () => {
                             </p>
                             {selectedConversation.listing.price && (
                               <p className="text-sm text-blue-700">
-                                ₱{selectedConversation.listing.price.toLocaleString()}
+                                ₱{parseFloat(selectedConversation.listing.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </p>
                             )}
                           </div>

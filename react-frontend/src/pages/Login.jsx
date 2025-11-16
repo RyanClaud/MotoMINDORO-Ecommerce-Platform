@@ -1,20 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FaMotorcycle, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle } from 'react-icons/fa';
+import { FaMotorcycle, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaExclamationTriangle, FaShieldAlt } from 'react-icons/fa';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const [lockMessage, setLockMessage] = useState('');
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [attempts, setAttempts] = useState(0);
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Countdown timer
+  useEffect(() => {
+    if (remainingTime > 0) {
+      const timer = setInterval(() => {
+        setRemainingTime((prev) => {
+          if (prev <= 1) {
+            setError('');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [remainingTime]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return mins > 0 ? `${mins}:${secs.toString().padStart(2, '0')}` : `${secs}s`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (remainingTime > 0) {
+      return;
+    }
+
     setError('');
     setLoading(true);
+    setIsLocked(false);
 
     try {
       const userData = await login(email, password);
@@ -26,7 +59,21 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials');
+      const response = err.response?.data;
+      
+      if (response?.is_locked) {
+        // Permanent lock
+        setIsLocked(true);
+        setLockMessage(response.message);
+        setError(response.message);
+      } else if (response?.remaining_seconds) {
+        // Temporary lock
+        setRemainingTime(response.remaining_seconds);
+        setAttempts(response.attempts || 0);
+        setError(response.message);
+      } else {
+        setError(response?.message || 'Invalid credentials');
+      }
     } finally {
       setLoading(false);
     }
@@ -44,17 +91,34 @@ const Login = () => {
       <div className="max-w-6xl w-full flex flex-col lg:flex-row items-center gap-12 relative z-10">
         {/* Left Side - Branding */}
         <div className="flex-1 text-center lg:text-left animate-fade-in-left">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl mb-6 animate-bounce-slow">
-            <FaMotorcycle className="text-4xl text-white" />
+          {/* Hero Logo with Glow Effect */}
+          <div className="relative inline-flex items-center justify-center mb-8">
+            {/* Animated Glow Rings */}
+            <div className="absolute inset-0 animate-pulse-slow">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 rounded-full blur-3xl opacity-30"></div>
+            </div>
+            <div className="absolute inset-0 animate-spin-slow">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full blur-2xl opacity-20"></div>
+            </div>
+            
+            {/* Logo */}
+            <div className="relative animate-float">
+              <img 
+                src="/motomindoro_logo.png" 
+                alt="MotoMindoro Logo" 
+                className="w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+              />
+            </div>
           </div>
+
           <h1 className="text-5xl lg:text-6xl font-black text-gray-900 mb-4 leading-tight">
             Welcome to
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 animate-gradient">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 animate-gradient">
               MotoMINDORO
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            Your trusted marketplace for buying and selling motorcycles across the Philippines
+            Your trusted marketplace for buying and selling motorcycles across Oriental Mindoro
           </p>
           
           {/* Features */}
@@ -91,7 +155,57 @@ const Login = () => {
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {error && (
+              {/* Permanent Lock Warning */}
+              {isLocked && (
+                <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-6 animate-shake">
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-red-500 p-3 rounded-xl flex-shrink-0">
+                      <FaShieldAlt className="text-white text-2xl" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-black text-red-900 mb-2">Account Locked</h3>
+                      <p className="text-sm text-red-700 mb-4">{lockMessage}</p>
+                      <div className="bg-white rounded-xl p-4 border-2 border-red-200">
+                        <p className="text-sm font-bold text-gray-900 mb-2">To unlock your account:</p>
+                        <ol className="text-sm text-gray-700 space-y-1 list-decimal list-inside">
+                          <li>Contact the administrator</li>
+                          <li>Provide proof of ownership (ID, registration details)</li>
+                          <li>Wait for admin verification</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Temporary Lock with Countdown */}
+              {!isLocked && remainingTime > 0 && (
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-6 animate-shake">
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-yellow-500 p-3 rounded-xl flex-shrink-0">
+                      <FaExclamationTriangle className="text-white text-2xl" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-black text-yellow-900 mb-2">Too Many Attempts</h3>
+                      <p className="text-sm text-yellow-700 mb-3">{error}</p>
+                      <div className="bg-white rounded-xl p-4 border-2 border-yellow-200">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-bold text-gray-900">Wait time:</span>
+                          <span className="text-3xl font-black text-yellow-600">{formatTime(remainingTime)}</span>
+                        </div>
+                        {attempts > 0 && (
+                          <p className="text-xs text-gray-600 mt-2">
+                            Failed attempts: {attempts}/7 (Account locks at 7 attempts)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Regular Error */}
+              {!isLocked && remainingTime === 0 && error && (
                 <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-xl animate-shake">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -148,16 +262,36 @@ const Login = () => {
                 </div>
               </div>
 
+              {/* Forgot Password Link */}
+              <div className="flex items-center justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               <div>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || remainingTime > 0 || isLocked}
                   className="group relative w-full flex justify-center items-center py-4 px-4 border border-transparent text-base font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       <span>Signing in...</span>
+                    </div>
+                  ) : remainingTime > 0 ? (
+                    <div className="flex items-center space-x-2">
+                      <FaExclamationTriangle />
+                      <span>Locked - Wait {formatTime(remainingTime)}</span>
+                    </div>
+                  ) : isLocked ? (
+                    <div className="flex items-center space-x-2">
+                      <FaShieldAlt />
+                      <span>Account Locked - Contact Admin</span>
                     </div>
                   ) : (
                     <>
@@ -250,6 +384,35 @@ const Login = () => {
           }
         }
 
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-20px) rotate(2deg);
+          }
+        }
+
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.1);
+          }
+        }
+
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
         @keyframes shake {
           0%, 100% {
             transform: translateX(0);
@@ -307,6 +470,18 @@ const Login = () => {
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 3s ease infinite;
+        }
+
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
         }
       `}</style>
     </div>

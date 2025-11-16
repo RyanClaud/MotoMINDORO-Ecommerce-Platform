@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     return user;
   };
 
-  const register = async (name, email, password, password_confirmation, role) => {
+  const register = async (name, email, password, password_confirmation, role, security_question_1, security_answer_1, security_question_2, security_answer_2) => {
     // Get CSRF token first
     await getCsrfToken();
     
@@ -53,6 +53,10 @@ export const AuthProvider = ({ children }) => {
       password,
       password_confirmation,
       role,
+      security_question_1,
+      security_answer_1,
+      security_question_2,
+      security_answer_2,
     });
     const { user } = response.data;
     

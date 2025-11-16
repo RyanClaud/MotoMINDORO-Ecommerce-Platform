@@ -8,9 +8,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-500 p-2 rounded-xl">
-                <FaMotorcycle className="text-2xl text-white" />
-              </div>
+              <img 
+                src="/motomindoro_logo.png" 
+                alt="MotoMindoro Logo" 
+                className="w-12 h-12 object-contain drop-shadow-lg"
+              />
               <span className="text-2xl font-bold">MotoMindoro</span>
             </div>
             <p className="text-gray-400 leading-relaxed mb-4">
@@ -63,10 +65,10 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors flex items-center space-x-2">
+                <Link to="/contact" className="text-gray-400 hover:text-blue-400 transition-colors flex items-center space-x-2">
                   <span className="w-1 h-1 bg-blue-400 rounded-full"></span>
                   <span>Contact Us</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to="/terms-of-service" className="text-gray-400 hover:text-blue-400 transition-colors flex items-center space-x-2">

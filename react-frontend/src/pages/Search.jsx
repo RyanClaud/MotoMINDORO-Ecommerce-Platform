@@ -166,7 +166,7 @@ const Search = () => {
             Search <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">Motorcycles</span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Find your perfect ride from <span className="font-bold text-white">thousands of listings</span> across the Philippines
+            Find your perfect ride from thousands of listings across <span className="font-bold text-white"> Oriental Mindoro</span>
           </p>
           
           {/* Quick Stats */}

@@ -505,74 +505,93 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Status Overview */}
+            {/* Status Overview - Enhanced */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
-                <div className="flex items-center justify-between">
-                  <FaCheckCircle className="text-2xl text-green-600" />
-                  <span className="text-2xl font-bold text-gray-900">{analytics.publishedListings}</span>
+              <div className="group bg-white rounded-3xl p-6 border-2 border-green-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="bg-green-100 p-3 rounded-2xl group-hover:scale-110 transition-transform">
+                    <FaCheckCircle className="text-3xl text-green-600" />
+                  </div>
+                  <span className="text-4xl font-black text-gray-900">{analytics.publishedListings}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-2 font-medium">Published</p>
+                <p className="text-sm text-gray-700 font-bold">Published</p>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border-2 border-blue-200">
-                <div className="flex items-center justify-between">
-                  <FaBox className="text-2xl text-blue-600" />
-                  <span className="text-2xl font-bold text-gray-900">{analytics.soldListings}</span>
+              <div className="group bg-white rounded-3xl p-6 border-2 border-blue-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="bg-blue-100 p-3 rounded-2xl group-hover:scale-110 transition-transform">
+                    <FaBox className="text-3xl text-blue-600" />
+                  </div>
+                  <span className="text-4xl font-black text-gray-900">{analytics.soldListings}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-2 font-medium">Sold</p>
+                <p className="text-sm text-gray-700 font-bold">Sold</p>
               </div>
 
-              <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 border-2 border-gray-200">
-                <div className="flex items-center justify-between">
-                  <FaEdit className="text-2xl text-gray-600" />
-                  <span className="text-2xl font-bold text-gray-900">{analytics.draftListings}</span>
+              <div className="group bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="bg-gray-100 p-3 rounded-2xl group-hover:scale-110 transition-transform">
+                    <FaEdit className="text-3xl text-gray-600" />
+                  </div>
+                  <span className="text-4xl font-black text-gray-900">{analytics.draftListings}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-2 font-medium">Draft</p>
+                <p className="text-sm text-gray-700 font-bold">Draft</p>
               </div>
 
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 border-2 border-yellow-200">
-                <div className="flex items-center justify-between">
-                  <FaExclamationTriangle className="text-2xl text-yellow-600" />
-                  <span className="text-2xl font-bold text-gray-900">{analytics.lowStockListings}</span>
+              <div className="group bg-white rounded-3xl p-6 border-2 border-yellow-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="bg-yellow-100 p-3 rounded-2xl group-hover:scale-110 transition-transform">
+                    <FaExclamationTriangle className="text-3xl text-yellow-600" />
+                  </div>
+                  <span className="text-4xl font-black text-gray-900">{analytics.lowStockListings}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-2 font-medium">Low Stock</p>
+                <p className="text-sm text-gray-700 font-bold">Low Stock</p>
               </div>
 
-              <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-4 border-2 border-red-200">
-                <div className="flex items-center justify-between">
-                  <FaTimes className="text-2xl text-red-600" />
-                  <span className="text-2xl font-bold text-gray-900">{analytics.outOfStockListings}</span>
+              <div className="group bg-white rounded-3xl p-6 border-2 border-red-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="bg-red-100 p-3 rounded-2xl group-hover:scale-110 transition-transform">
+                    <FaTimes className="text-3xl text-red-600" />
+                  </div>
+                  <span className="text-4xl font-black text-gray-900">{analytics.outOfStockListings}</span>
                 </div>
-                <p className="text-sm text-gray-700 mt-2 font-medium">Out of Stock</p>
+                <p className="text-sm text-gray-700 font-bold">Out of Stock</p>
               </div>
             </div>
 
             {/* My Stores Section */}
             <div className="mb-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <FaStore className="mr-3 text-blue-600" />
-                  My Stores
-                </h2>
+                <div>
+                  <h2 className="text-3xl font-black text-gray-900 flex items-center">
+                    <div className="bg-gradient-to-br from-green-600 to-emerald-600 p-3 rounded-xl mr-3">
+                      <FaStore className="text-2xl text-white" />
+                    </div>
+                    My Stores
+                  </h2>
+                  <p className="text-gray-600 mt-2 ml-14">Manage your store locations</p>
+                </div>
                 <Link
                   to="/stores/create"
-                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  <FaPlus />
+                  <FaPlus className="text-lg" />
                   <span>Add Store</span>
                 </Link>
               </div>
 
               {myStores.length === 0 ? (
-                <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                  <FaStore className="text-6xl text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-6 text-lg">You haven't created any stores yet.</p>
+                <div className="bg-white rounded-3xl shadow-xl p-12 text-center border-2 border-gray-100">
+                  <div className="bg-gradient-to-br from-gray-100 to-gray-200 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <FaStore className="text-5xl text-gray-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No Stores Yet</h3>
+                  <p className="text-gray-600 mb-8 text-lg">Create your first store to start selling motorcycles</p>
                   <Link
                     to="/stores/create"
-                    className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-10 py-4 rounded-xl font-bold hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    Create Your First Store
+                    <FaPlus />
+                    <span>Create Your First Store</span>
                   </Link>
                 </div>
               ) : (
@@ -669,21 +688,25 @@ const Dashboard = () => {
               </div>
 
               {myListings.length === 0 ? (
-                <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                  <FaMotorcycle className="text-6xl text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-6 text-lg">You haven't created any listings yet.</p>
+                <div className="bg-white rounded-3xl shadow-xl p-12 text-center border-2 border-gray-100">
+                  <div className="bg-gradient-to-br from-blue-100 to-indigo-100 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <FaMotorcycle className="text-5xl text-blue-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">No Listings Yet</h3>
+                  <p className="text-gray-600 mb-8 text-lg">Create your first motorcycle listing to start selling</p>
                   <Link
                     to="/listings/create"
-                    className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                    className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    Create Your First Listing
+                    <FaPlus />
+                    <span>Create Your First Listing</span>
                   </Link>
                 </div>
               ) : (
-                <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-gray-100">
+                <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-gray-100 hover:shadow-2xl transition-shadow">
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-gradient-to-r from-gray-50 to-blue-50 border-b-2 border-gray-200">
+                      <thead className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border-b-2 border-gray-200">
                         <tr>
                           <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Motorcycle</th>
                           <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Price</th>
@@ -721,7 +744,7 @@ const Dashboard = () => {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <span className="font-bold text-blue-600">₱{listing.price.toLocaleString()}</span>
+                              <span className="font-bold text-blue-600">₱{parseFloat(listing.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </td>
                             <td className="px-6 py-4">
                               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
