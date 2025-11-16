@@ -16,6 +16,7 @@ const Navbar = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [previousCount, setPreviousCount] = useState(0);
   const [pendingStoresCount, setPendingStoresCount] = useState(0);
+  const [pendingLocationSuggestionsCount, setPendingLocationSuggestionsCount] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('notificationSoundEnabled');
     return saved !== null ? JSON.parse(saved) : true;
@@ -112,6 +113,7 @@ const Navbar = () => {
           const response = await api.get('/admin/analytics');
           if (response.data.success) {
             setPendingStoresCount(response.data.data.totals.pending_stores || 0);
+            setPendingLocationSuggestionsCount(response.data.data.totals.pending_location_suggestions || 0);
           }
         } catch (error) {
           console.error('Error fetching pending stores:', error);
@@ -221,9 +223,9 @@ const Navbar = () => {
                   className="relative px-4 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium"
                 >
                   {user.role === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
-                  {user.role === 'admin' && pendingStoresCount > 0 && (
+                  {user.role === 'admin' && (pendingStoresCount + pendingLocationSuggestionsCount) > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-                      {pendingStoresCount}
+                      {pendingStoresCount + pendingLocationSuggestionsCount}
                     </span>
                   )}
                 </Link>

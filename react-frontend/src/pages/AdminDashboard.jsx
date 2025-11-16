@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   FaUsers, FaStore, FaMotorcycle, FaChartLine,
   FaUserPlus, FaShoppingBag, FaEye, FaCheckCircle,
-  FaChartBar, FaArrowUp, FaArrowDown
+  FaChartBar, FaArrowUp, FaArrowDown, FaMapMarkerAlt
 } from 'react-icons/fa';
 
 const AdminDashboard = () => {
@@ -113,6 +113,42 @@ const AdminDashboard = () => {
                   <button
                     onClick={() => navigate('/admin/stores')}
                     className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-yellow-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Review Now →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pending Location Suggestions Notification Banner */}
+        {totals.pending_location_suggestions > 0 && (
+          <div className="mb-6 animate-slide-up">
+            <div className="bg-gradient-to-r from-purple-400 via-pink-400 to-red-400 rounded-2xl shadow-2xl p-1">
+              <div className="bg-white rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-4 rounded-xl animate-pulse">
+                        <FaMapMarkerAlt className="text-3xl text-white" />
+                      </div>
+                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center animate-bounce">
+                        {totals.pending_location_suggestions}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {totals.pending_location_suggestions} Location Suggestion{totals.pending_location_suggestions > 1 ? 's' : ''} from Community
+                      </h3>
+                      <p className="text-gray-600 mt-1">
+                        Users have suggested new locations to add to the map
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => navigate('/admin/location-suggestions')}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     Review Now →
                   </button>
