@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import {
   FaStore, FaSearch, FaToggleOn, FaToggleOff, FaMapMarkerAlt,
-  FaPhone, FaEnvelope, FaMotorcycle, FaArrowLeft, FaFilter
+  FaPhone, FaEnvelope, FaMotorcycle, FaArrowLeft, FaFilter,
+  FaGasPump, FaWrench, FaChartLine
 } from 'react-icons/fa';
 
 const AdminStores = () => {
@@ -102,6 +103,24 @@ const AdminStores = () => {
     );
   }
 
+  // Calculate stats
+  const totalStores = stores.length;
+  const activeStores = stores.filter(s => s.is_active).length;
+  const motorcycleShops = stores.filter(s => s.shop_type === 'motorcycle_shop').length;
+  const vulcanizingShops = stores.filter(s => s.shop_type === 'vulcanizing_shop').length;
+  const gasolineStations = stores.filter(s => s.shop_type === 'gasoline_station').length;
+  const totalListings = stores.reduce((sum, store) => sum + (store.listings_count || 0), 0);
+
+  // Get shop type icon
+  const getShopTypeIcon = (shopType) => {
+    switch(shopType) {
+      case 'motorcycle_shop': return <FaMotorcycle className="text-xl" />;
+      case 'vulcanizing_shop': return <FaWrench className="text-xl" />;
+      case 'gasoline_station': return <FaGasPump className="text-xl" />;
+      default: return <FaStore className="text-xl" />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -109,21 +128,71 @@ const AdminStores = () => {
         <div className="mb-8 animate-fade-in">
           <button
             onClick={() => navigate('/admin/dashboard')}
-            className="flex items-center text-blue-600 hover:text-blue-800 mb-4 transition-colors group"
+            className="flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors group"
           >
             <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Dashboard
           </button>
-          <div className="flex items-center justify-between">
+          
+          {/* Title Section */}
+          <div className="flex items-center space-x-4 mb-8">
+            <div className="bg-gradient-to-br from-green-600 to-emerald-600 p-4 rounded-2xl shadow-lg">
+              <FaStore className="text-4xl text-white" />
+            </div>
             <div>
               <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 Store Management
               </h1>
-              <p className="text-gray-600 mt-2">Manage all stores in the system</p>
+              <p className="text-gray-600 mt-1">Manage all stores in the system</p>
             </div>
-            <div className="bg-white rounded-xl shadow-lg p-4">
-              <p className="text-sm text-gray-500">Total Stores</p>
-              <p className="text-3xl font-bold text-green-600">{stores.length}</p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            {/* Total Stores */}
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <FaStore className="text-3xl opacity-80" />
+                <FaChartLine className="text-2xl opacity-60" />
+              </div>
+              <p className="text-sm opacity-90 font-medium">Total Stores</p>
+              <p className="text-4xl font-bold mt-1">{totalStores}</p>
+            </div>
+
+            {/* Active Stores */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-green-200 transform hover:scale-105 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <FaToggleOn className="text-3xl text-green-600" />
+              </div>
+              <p className="text-sm text-gray-600 font-medium">Active Stores</p>
+              <p className="text-4xl font-bold text-green-600 mt-1">{activeStores}</p>
+            </div>
+
+            {/* Motorcycle Shops */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-purple-200 transform hover:scale-105 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <FaMotorcycle className="text-3xl text-purple-600" />
+              </div>
+              <p className="text-sm text-gray-600 font-medium">Motorcycle Shops</p>
+              <p className="text-4xl font-bold text-purple-600 mt-1">{motorcycleShops}</p>
+            </div>
+
+            {/* Vulcanizing Shops */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-orange-200 transform hover:scale-105 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <FaWrench className="text-3xl text-orange-600" />
+              </div>
+              <p className="text-sm text-gray-600 font-medium">Vulcanizing</p>
+              <p className="text-4xl font-bold text-orange-600 mt-1">{vulcanizingShops}</p>
+            </div>
+
+            {/* Gasoline Stations */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-blue-200 transform hover:scale-105 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <FaGasPump className="text-3xl text-blue-600" />
+              </div>
+              <p className="text-sm text-gray-600 font-medium">Gas Stations</p>
+              <p className="text-4xl font-bold text-blue-600 mt-1">{gasolineStations}</p>
             </div>
           </div>
         </div>
@@ -177,68 +246,85 @@ const AdminStores = () => {
           {stores.map((store, index) => (
             <div
               key={store.id}
-              className="group bg-white rounded-2xl shadow-lg p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slide-up"
+              className="group bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slide-up border-2 border-gray-100 hover:border-green-300"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              {/* Store Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-600 transition-colors">
-                    {store.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 capitalize mt-1">
-                    {store.shop_type?.replace('_', ' ')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleToggleStatus(store.id)}
-                  className={`p-2 rounded-lg transition-all ${
-                    store.is_active
-                      ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                      : 'bg-red-100 text-red-600 hover:bg-red-200'
-                  }`}
-                  title={store.is_active ? 'Deactivate' : 'Activate'}
-                >
-                  {store.is_active ? <FaToggleOn className="text-2xl" /> : <FaToggleOff className="text-2xl" />}
-                </button>
-              </div>
-
-              {/* Store Info */}
-              <div className="space-y-3 mb-4">
-                <div className="flex items-start text-sm text-gray-600">
-                  <FaMapMarkerAlt className="mt-1 mr-2 text-green-500 flex-shrink-0" />
-                  <span>{store.address}, {store.city}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <FaPhone className="mr-2 text-blue-500" />
-                  <span>{store.phone}</span>
-                </div>
-                {store.email && (
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FaEnvelope className="mr-2 text-purple-500" />
-                    <span className="truncate">{store.email}</span>
+              {/* Store Header with Gradient */}
+              <div className={`p-6 pb-4 ${
+                store.shop_type === 'motorcycle_shop' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                store.shop_type === 'vulcanizing_shop' ? 'bg-gradient-to-r from-orange-500 to-red-500' :
+                store.shop_type === 'gasoline_station' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                'bg-gradient-to-r from-green-500 to-emerald-500'
+              }`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <div className="bg-white bg-opacity-20 backdrop-blur-sm p-3 rounded-xl">
+                      {getShopTypeIcon(store.shop_type)}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-white line-clamp-1">
+                        {store.name}
+                      </h3>
+                      <p className="text-sm text-white text-opacity-90 capitalize mt-1">
+                        {store.shop_type?.replace('_', ' ')}
+                      </p>
+                    </div>
                   </div>
-                )}
-              </div>
-
-              {/* Store Stats */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="flex items-center text-sm">
-                  <FaMotorcycle className="text-purple-500 mr-2" />
-                  <span className="font-semibold text-gray-900">{store.listings_count}</span>
-                  <span className="text-gray-500 ml-1">listings</span>
+                  <button
+                    onClick={() => handleToggleStatus(store.id)}
+                    className={`p-2 rounded-xl transition-all backdrop-blur-sm ${
+                      store.is_active
+                        ? 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                        : 'bg-black bg-opacity-20 text-white hover:bg-opacity-30'
+                    }`}
+                    title={store.is_active ? 'Deactivate' : 'Activate'}
+                  >
+                    {store.is_active ? <FaToggleOn className="text-2xl" /> : <FaToggleOff className="text-2xl" />}
+                  </button>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  store.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {store.is_active ? 'Active' : 'Inactive'}
-                </span>
               </div>
 
-              {/* Owner Info */}
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-500">Owner</p>
-                <p className="text-sm font-semibold text-gray-900">{store.user?.name}</p>
+              {/* Store Content */}
+              <div className="p-6 pt-4">
+                {/* Store Info */}
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start text-sm text-gray-700">
+                    <FaMapMarkerAlt className="mt-1 mr-3 text-green-500 flex-shrink-0" />
+                    <span className="font-medium">{store.address}, {store.city}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-700">
+                    <FaPhone className="mr-3 text-blue-500" />
+                    <span className="font-medium">{store.phone}</span>
+                  </div>
+                  {store.email && (
+                    <div className="flex items-center text-sm text-gray-700">
+                      <FaEnvelope className="mr-3 text-purple-500" />
+                      <span className="truncate font-medium">{store.email}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Store Stats */}
+                <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
+                  <div className="flex items-center space-x-2 bg-purple-50 px-3 py-2 rounded-lg">
+                    <FaMotorcycle className="text-purple-600" />
+                    <span className="font-bold text-gray-900">{store.listings_count || 0}</span>
+                    <span className="text-gray-600 text-sm">listings</span>
+                  </div>
+                  <span className={`px-4 py-2 rounded-xl text-xs font-bold shadow-sm ${
+                    store.is_active 
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
+                      : 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
+                  }`}>
+                    {store.is_active ? '✓ Active' : '✗ Inactive'}
+                  </span>
+                </div>
+
+                {/* Owner Info */}
+                <div className="mt-4 pt-4 border-t-2 border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50 -mx-6 -mb-6 px-6 py-4 rounded-b-2xl">
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Owner</p>
+                  <p className="text-sm font-bold text-gray-900 mt-1">{store.user?.name}</p>
+                </div>
               </div>
             </div>
           ))}
@@ -281,3 +367,32 @@ const AdminStores = () => {
 };
 
 export default AdminStores;
+
+// Add custom styles for animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out;
+  }
+`;
+if (typeof document !== 'undefined' && !document.getElementById('admin-stores-animations')) {
+  style.id = 'admin-stores-animations';
+  document.head.appendChild(style);
+}
