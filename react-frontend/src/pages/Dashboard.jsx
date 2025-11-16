@@ -526,33 +526,67 @@ const Dashboard = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {myStores.map((store) => (
-                    <div key={store.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
-                      {store.banner && (
-                        <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
-                          <img src={`http://localhost:8000/storage/${store.banner}`} alt={store.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <div className="p-6">
-                        <div className="flex items-start space-x-4">
-                          {store.logo && (
-                            <img src={`http://localhost:8000/storage/${store.logo}`} alt={store.name} className="w-16 h-16 rounded-lg object-cover" />
-                          )}
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{store.name}</h3>
-                            <p className="text-gray-600 text-sm mb-3">{store.city}</p>
-                            <div className="flex items-center space-x-4 text-sm">
-                              <span className="text-gray-600">
-                                <FaMotorcycle className="inline mr-1" />
-                                {store.listings?.length || 0} listings
-                              </span>
+                    <div key={store.id} className="group relative bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100">
+                      {/* Banner with Gradient Overlay */}
+                      <div className="h-40 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative overflow-hidden">
+                        {store.banner ? (
+                          <>
+                            <img src={`http://localhost:8000/storage/${store.banner}`} alt={store.name} className="w-full h-full object-cover opacity-90" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                          </>
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <FaStore className="text-6xl text-white/30" />
+                          </div>
+                        )}
+                        {/* Logo Overlay */}
+                        {store.logo && (
+                          <div className="absolute -bottom-8 left-6">
+                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-white">
+                              <img src={`http://localhost:8000/storage/${store.logo}`} alt={store.name} className="w-full h-full object-cover" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 pt-12">
+                        <h3 className="text-2xl font-black text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{store.name}</h3>
+                        <p className="text-gray-600 text-sm mb-4 flex items-center">
+                          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                          </svg>
+                          {store.city}
+                        </p>
+                        
+                        {/* Stats */}
+                        <div className="flex items-center space-x-6 mb-6 pb-6 border-b border-gray-100">
+                          <div className="flex items-center space-x-2">
+                            <div className="bg-purple-100 p-2 rounded-lg">
+                              <FaMotorcycle className="text-purple-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-bold text-gray-900">{store.listings?.length || 0}</p>
+                              <p className="text-xs text-gray-500">Listings</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="bg-green-100 p-2 rounded-lg">
+                              <FaEye className="text-green-600" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-bold text-gray-900">0</p>
+                              <p className="text-xs text-gray-500">Views</p>
                             </div>
                           </div>
                         </div>
+
+                        {/* Action Button */}
                         <Link
                           to={`/stores/${store.id}`}
-                          className="mt-4 block w-full text-center bg-blue-50 text-blue-600 py-2 rounded-lg font-semibold hover:bg-blue-100 transition-all"
+                          className="block w-full text-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
-                          View Store
+                          View Store →
                         </Link>
                       </div>
                     </div>
@@ -564,15 +598,20 @@ const Dashboard = () => {
             {/* My Listings Section with CRUD */}
             <div>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <FaMotorcycle className="mr-3 text-blue-600" />
-                  My Listings
-                </h2>
+                <div>
+                  <h2 className="text-3xl font-black text-gray-900 flex items-center">
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-3 rounded-xl mr-3">
+                      <FaMotorcycle className="text-2xl text-white" />
+                    </div>
+                    My Listings
+                  </h2>
+                  <p className="text-gray-600 mt-2 ml-14">Manage your motorcycle listings</p>
+                </div>
                 <Link
                   to="/listings/create"
-                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
-                  <FaPlus />
+                  <FaPlus className="text-lg" />
                   <span>Add Listing</span>
                 </Link>
               </div>
@@ -589,17 +628,17 @@ const Dashboard = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-gray-100">
                   <div className="overflow-x-auto">
                     <table className="w-full">
-                      <thead className="bg-gray-50 border-b-2 border-gray-200">
+                      <thead className="bg-gradient-to-r from-gray-50 to-blue-50 border-b-2 border-gray-200">
                         <tr>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Motorcycle</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Views</th>
-                          <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Motorcycle</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Price</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Stock</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Views</th>
+                          <th className="px-6 py-5 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
