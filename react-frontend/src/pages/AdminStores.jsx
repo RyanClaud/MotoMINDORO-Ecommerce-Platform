@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   FaStore, FaSearch, FaToggleOn, FaToggleOff, FaMapMarkerAlt,
   FaPhone, FaEnvelope, FaMotorcycle, FaArrowLeft, FaFilter,
-  FaGasPump, FaWrench, FaChartLine
+  FaGasPump, FaWrench, FaChartLine, FaCheck, FaTimes, FaClock
 } from 'react-icons/fa';
 
 const AdminStores = () => {
@@ -16,8 +16,11 @@ const AdminStores = () => {
   const [search, setSearch] = useState('');
   const [shopTypeFilter, setShopTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [approvalFilter, setApprovalFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [rejectingStore, setRejectingStore] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     if (user && user.role !== 'admin') {
@@ -25,7 +28,7 @@ const AdminStores = () => {
       return;
     }
     fetchStores();
-  }, [user, navigate, search, shopTypeFilter, statusFilter, currentPage]);
+  }, [user, navigate, search, shopTypeFilter, statusFilter, approvalFilter, currentPage]);
 
   const fetchStores = async () => {
     try {
@@ -37,6 +40,7 @@ const AdminStores = () => {
       
       if (shopTypeFilter !== 'all') params.shop_type = shopTypeFilter;
       if (statusFilter !== 'all') params.is_active = statusFilter === 'active' ? 1 : 0;
+      if (approvalFilter !== 'all') params.approval_status = approvalFilter;
 
       const response = await axios.get('http://localhost:8000/api/admin/stores', {
         withCredentials: true,
@@ -54,27 +58,25 @@ const AdminStores = () => {
     }
   };
 
+  const getCsrfToken = () => {
+    const name = 'XSRF-TOKEN=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    
+    for (let i = 0; i < cookieArray.length; i++) {
+      let cookie = cookieArray[i].trim();
+      if (cookie.indexOf(name) === 0) {
+        return cookie.substring(name.length, cookie.length);
+      }
+    }
+    return null;
+  };
+
   const handleToggleStatus = async (storeId) => {
     try {
-      // Get CSRF token first
       await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
         withCredentials: true
       });
-
-      // Get CSRF token from cookie
-      const getCsrfToken = () => {
-        const name = 'XSRF-TOKEN=';
-        const decodedCookie = decodeURIComponent(document.cookie);
-        const cookieArray = decodedCookie.split(';');
-        
-        for (let i = 0; i < cookieArray.length; i++) {
-          let cookie = cookieArray[i].trim();
-          if (cookie.indexOf(name) === 0) {
-            return cookie.substring(name.length, cookie.length);
-          }
-        }
-        return null;
-      };
 
       const csrfToken = getCsrfToken();
 
@@ -92,6 +94,62 @@ const AdminStores = () => {
     }
   };
 
+  const handleApproveStore = async (storeId) => {
+    try {
+      await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+        withCredentials: true
+      });
+
+      const csrfToken = getCsrfToken();
+
+      await axios.put(`http://localhost:8000/api/admin/stores/${storeId}/approve`, {}, {
+        withCredentials: true,
+        headers: {
+          'X-XSRF-TOKEN': csrfToken
+        }
+      });
+      
+      alert('Store approved successfully!');
+      fetchStores();
+    } catch (error) {
+      console.error('Error approving store:', error);
+      alert('Failed to approve store');
+    }
+  };
+
+  const handleRejectStore = async () => {
+    if (!rejectionReason.trim()) {
+      alert('Please provide a reason for rejection');
+      return;
+    }
+
+    try {
+      await axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+        withCredentials: true
+      });
+
+      const csrfToken = getCsrfToken();
+
+      await axios.put(`http://localhost:8000/api/admin/stores/${rejectingStore}/reject`, 
+        { reason: rejectionReason },
+        {
+          withCredentials: true,
+          headers: {
+            'X-XSRF-TOKEN': csrfToken
+          }
+        }
+      );
+      
+      alert('Store rejected successfully!');
+      setRejectingStore(null);
+      setRejectionReason('');
+      fetchStores();
+    } catch (error) {
+      console.error('Error rejecting store:', error);
+      alert('Failed to reject store');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -106,6 +164,7 @@ const AdminStores = () => {
   // Calculate stats
   const totalStores = stores.length;
   const activeStores = stores.filter(s => s.is_active).length;
+  const pendingStores = stores.filter(s => s.approval_status === 'pending').length;
   const motorcycleShops = stores.filter(s => s.shop_type === 'motorcycle_shop').length;
   const vulcanizingShops = stores.filter(s => s.shop_type === 'vulcanizing_shop').length;
   const gasolineStations = stores.filter(s => s.shop_type === 'gasoline_station').length;
@@ -148,7 +207,7 @@ const AdminStores = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
             {/* Total Stores */}
             <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-all">
               <div className="flex items-center justify-between mb-2">
@@ -157,6 +216,16 @@ const AdminStores = () => {
               </div>
               <p className="text-sm opacity-90 font-medium">Total Stores</p>
               <p className="text-4xl font-bold mt-1">{totalStores}</p>
+            </div>
+
+            {/* Pending Approval */}
+            <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl shadow-xl p-6 text-white transform hover:scale-105 transition-all cursor-pointer"
+                 onClick={() => setApprovalFilter('pending')}>
+              <div className="flex items-center justify-between mb-2">
+                <FaClock className="text-3xl opacity-80" />
+              </div>
+              <p className="text-sm opacity-90 font-medium">Pending Approval</p>
+              <p className="text-4xl font-bold mt-1">{pendingStores}</p>
             </div>
 
             {/* Active Stores */}
@@ -203,7 +272,7 @@ const AdminStores = () => {
             <FaFilter className="text-gray-400 mr-2" />
             <h2 className="text-lg font-bold text-gray-900">Filters</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -215,6 +284,18 @@ const AdminStores = () => {
                 className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               />
             </div>
+
+            {/* Approval Status Filter */}
+            <select
+              value={approvalFilter}
+              onChange={(e) => setApprovalFilter(e.target.value)}
+              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all font-semibold"
+            >
+              <option value="all">All Approval Status</option>
+              <option value="pending">⏳ Pending</option>
+              <option value="approved">✓ Approved</option>
+              <option value="rejected">✗ Rejected</option>
+            </select>
 
             {/* Shop Type Filter */}
             <select
@@ -320,6 +401,50 @@ const AdminStores = () => {
                   </span>
                 </div>
 
+                {/* Approval Status Badge */}
+                <div className="mt-4 pt-4 border-t-2 border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Approval Status</span>
+                    <span className={`px-3 py-1 rounded-lg text-xs font-bold ${
+                      store.approval_status === 'approved' ? 'bg-green-100 text-green-800' :
+                      store.approval_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {store.approval_status === 'approved' ? '✓ Approved' :
+                       store.approval_status === 'rejected' ? '✗ Rejected' :
+                       '⏳ Pending'}
+                    </span>
+                  </div>
+                  
+                  {/* Approval Actions for Pending Stores */}
+                  {store.approval_status === 'pending' && (
+                    <div className="flex space-x-2 mt-3">
+                      <button
+                        onClick={() => handleApproveStore(store.id)}
+                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105"
+                      >
+                        <FaCheck />
+                        <span>Approve</span>
+                      </button>
+                      <button
+                        onClick={() => setRejectingStore(store.id)}
+                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105"
+                      >
+                        <FaTimes />
+                        <span>Reject</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Show rejection reason if rejected */}
+                  {store.approval_status === 'rejected' && store.rejection_reason && (
+                    <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                      <p className="text-xs text-red-600 font-semibold mb-1">Rejection Reason:</p>
+                      <p className="text-xs text-red-800">{store.rejection_reason}</p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Owner Info */}
                 <div className="mt-4 pt-4 border-t-2 border-gray-100 bg-gradient-to-r from-gray-50 to-blue-50 -mx-6 -mb-6 px-6 py-4 rounded-b-2xl">
                   <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Owner</p>
@@ -359,6 +484,64 @@ const AdminStores = () => {
             >
               Next
             </button>
+          </div>
+        )}
+
+        {/* Rejection Modal */}
+        {rejectingStore && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md mx-4 transform animate-slide-up">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-gradient-to-br from-red-600 to-pink-600 p-3 rounded-xl">
+                    <FaTimes className="text-2xl text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900">Reject Store</h3>
+                </div>
+                <button
+                  onClick={() => {
+                    setRejectingStore(null);
+                    setRejectionReason('');
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
+                >
+                  <FaTimes className="text-xl" />
+                </button>
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Reason for Rejection
+                </label>
+                <textarea
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"
+                  rows="4"
+                  placeholder="Please provide a reason for rejecting this store..."
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => {
+                    setRejectingStore(null);
+                    setRejectionReason('');
+                  }}
+                  className="px-6 py-3 text-gray-600 hover:text-gray-800 font-semibold rounded-xl hover:bg-gray-100 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRejectStore}
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold rounded-xl hover:from-red-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <FaTimes />
+                  <span>Reject Store</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
