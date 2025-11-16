@@ -194,50 +194,176 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Modern Role Switcher */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 mb-8 border border-white/20">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Switch Mode</h2>
-            <span className="text-sm text-gray-500">Choose your experience</span>
+        {/* Buyer Dashboard Content - Moved Up */}
+        {user?.role === 'buyer' && (
+          <div className="space-y-8 mb-8">
+            {/* Premium Welcome Card */}
+            <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-3xl shadow-2xl p-8 md:p-12">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+              <div className="relative z-10 text-center text-white">
+                <div className="inline-block bg-white/20 backdrop-blur-sm p-4 rounded-2xl mb-6">
+                  <FaUsers className="text-6xl" />
+                </div>
+                <h2 className="text-4xl font-black mb-4">Buyer Dashboard</h2>
+                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+                  Discover your dream motorcycle, save favorites, and connect with trusted sellers across Oriental Mindoro
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Action Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Browse Motorcycles */}
+              <Link
+                to="/search"
+                className="group relative bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="bg-gradient-to-br from-blue-600 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaMotorcycle className="text-3xl text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Browse Motorcycles</h3>
+                  <p className="text-gray-600 mb-4">
+                    Explore thousands of motorcycles from verified sellers
+                  </p>
+                  <div className="flex items-center text-blue-600 font-semibold group-hover:translate-x-2 transition-transform">
+                    <span>Start Browsing</span>
+                    <FaFire className="ml-2" />
+                  </div>
+                </div>
+              </Link>
+
+              {/* View Favorites */}
+              <Link
+                to="/favorites"
+                className="group relative bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-600/10 to-red-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="bg-gradient-to-br from-pink-600 to-red-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaUsers className="text-3xl text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">My Favorites</h3>
+                  <p className="text-gray-600 mb-4">
+                    View and manage your saved motorcycles
+                  </p>
+                  <div className="flex items-center text-pink-600 font-semibold group-hover:translate-x-2 transition-transform">
+                    <span>View Collection</span>
+                    <FaTrophy className="ml-2" />
+                  </div>
+                </div>
+              </Link>
+
+              {/* Explore Map */}
+              <Link
+                to="/map"
+                className="group relative bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-green-600/10 to-emerald-600/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10">
+                  <div className="bg-gradient-to-br from-green-600 to-emerald-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaStore className="text-3xl text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Explore Map</h3>
+                  <p className="text-gray-600 mb-4">
+                    Find nearby stores and dealerships on the map
+                  </p>
+                  <div className="flex items-center text-green-600 font-semibold group-hover:translate-x-2 transition-transform">
+                    <span>Open Map</span>
+                    <FaChartBar className="ml-2" />
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Features Grid */}
+            <div className="bg-white rounded-3xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <FaTrophy className="mr-3 text-yellow-500" />
+                Why Choose MotoMINDORO?
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-blue-100 p-3 rounded-xl flex-shrink-0">
+                    <FaCheckCircle className="text-2xl text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Verified Sellers</h4>
+                    <p className="text-gray-600 text-sm">All sellers are verified for your safety and peace of mind</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="bg-green-100 p-3 rounded-xl flex-shrink-0">
+                    <FaStore className="text-2xl text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Local Dealerships</h4>
+                    <p className="text-gray-600 text-sm">Connect with trusted local motorcycle shops in Oriental Mindoro</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="bg-purple-100 p-3 rounded-xl flex-shrink-0">
+                    <FaMotorcycle className="text-2xl text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Wide Selection</h4>
+                    <p className="text-gray-600 text-sm">Browse from hundreds of motorcycles in various brands and models</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="bg-orange-100 p-3 rounded-xl flex-shrink-0">
+                    <FaDollarSign className="text-2xl text-orange-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-1">Best Prices</h4>
+                    <p className="text-gray-600 text-sm">Compare prices and find the best deals in your area</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+        )}
+
+        {/* Compact Role Switcher - Moved Down & Made Smaller */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8 border border-white/20">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-bold text-gray-700">Switch Mode</h2>
+            <span className="text-xs text-gray-500">Choose your experience</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => handleSwitchRole('buyer')}
-              className={`group relative overflow-hidden px-6 py-6 rounded-2xl font-bold transition-all duration-300 ${
+              className={`group relative overflow-hidden px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                 user?.role === 'buyer'
-                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105'
-                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:scale-105 hover:shadow-lg'
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg'
+                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:shadow-md'
               }`}
             >
-              <div className="relative z-10 flex flex-col items-center space-y-2">
-                <FaUsers className="text-3xl" />
+              <div className="relative z-10 flex items-center justify-center space-x-2">
+                <FaUsers className="text-lg" />
                 <span>Buyer</span>
                 {user?.role === 'buyer' && (
-                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Active</span>
+                  <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">Active</span>
                 )}
               </div>
-              {user?.role === 'buyer' && (
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-              )}
             </button>
             <button
               onClick={() => handleSwitchRole('seller')}
-              className={`group relative overflow-hidden px-6 py-6 rounded-2xl font-bold transition-all duration-300 ${
+              className={`group relative overflow-hidden px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
                 user?.role === 'seller' || user?.role === 'admin'
-                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-2xl scale-105'
-                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:scale-105 hover:shadow-lg'
+                  ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg'
+                  : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-700 hover:shadow-md'
               }`}
             >
-              <div className="relative z-10 flex flex-col items-center space-y-2">
-                <FaStore className="text-3xl" />
+              <div className="relative z-10 flex items-center justify-center space-x-2">
+                <FaStore className="text-lg" />
                 <span>Seller</span>
                 {(user?.role === 'seller' || user?.role === 'admin') && (
-                  <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Active</span>
+                  <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full ml-1">Active</span>
                 )}
               </div>
-              {(user?.role === 'seller' || user?.role === 'admin') && (
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-              )}
             </button>
           </div>
         </div>
@@ -563,29 +689,7 @@ const Dashboard = () => {
           </>
         )}
 
-        {user?.role === 'buyer' && (
-          <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
-            <FaUsers className="text-6xl text-blue-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Buyer Dashboard</h2>
-            <p className="text-gray-600 mb-8 text-lg">
-              Browse motorcycles, save favorites, and contact sellers.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <Link
-                to="/search"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
-              >
-                Browse Motorcycles
-              </Link>
-              <Link
-                to="/favorites"
-                className="bg-gray-200 text-gray-700 px-8 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-all"
-              >
-                View Favorites
-              </Link>
-            </div>
-          </div>
-        )}
+
       </div>
 
       {/* Edit Modal */}
