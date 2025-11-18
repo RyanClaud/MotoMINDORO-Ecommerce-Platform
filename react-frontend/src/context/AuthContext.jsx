@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import api, { getCsrfToken } from '../api/axios';
+import { getUserFromCookie, setUserCookie, clearAuthCookies } from '../utils/cookies';
 
 const AuthContext = createContext(null);
 
@@ -14,16 +15,16 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const savedUser = sessionStorage.getItem('user');
+      const savedUser = getUserFromCookie();
       if (savedUser) {
         // Verify session is still valid
         const response = await api.get('/me');
         setUser(response.data);
-        sessionStorage.setItem('user', JSON.stringify(response.data));
+        setUserCookie(response.data, 7); // Store for 7 days
       }
     } catch (error) {
       // Session expired or invalid
-      sessionStorage.removeItem('user');
+      clearAuthCookies();
       setUser(null);
     } finally {
       setLoading(false);
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     const response = await api.post('/login', { email, password });
     const { user } = response.data;
     
-    sessionStorage.setItem('user', JSON.stringify(user));
+    setUserCookie(user, 7); // Store for 7 days
     setUser(user);
     
     return user;
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     });
     const { user } = response.data;
     
-    sessionStorage.setItem('user', JSON.stringify(user));
+    setUserCookie(user, 7); // Store for 7 days
     setUser(user);
     
     return user;
@@ -73,13 +74,13 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout error:', error);
     }
     
-    sessionStorage.removeItem('user');
+    clearAuthCookies();
     setUser(null);
   };
 
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
-    sessionStorage.setItem('user', JSON.stringify(updatedUser));
+    setUserCookie(updatedUser, 7); // Store for 7 days
   };
 
   const switchRole = async (role) => {

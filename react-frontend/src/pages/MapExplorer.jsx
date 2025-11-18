@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import MapComponent from '../components/MapComponent';
 import StoreCard from '../components/StoreCard';
-import { FaMapMarkedAlt, FaList, FaSearch, FaFilter } from 'react-icons/fa';
+import { 
+  FaMapMarkedAlt, FaList, FaSearch, FaFilter, FaExpand, FaCompress,
+  FaBars, FaTimes, FaBookmark, FaClock, FaMapMarkerAlt, FaPlus, FaPrint,
+  FaShareAlt, FaCog
+} from 'react-icons/fa';
 
 const MapExplorer = () => {
   const [stores, setStores] = useState([]);
@@ -14,6 +18,8 @@ const MapExplorer = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedShopType, setSelectedShopType] = useState('');
   const [cities, setCities] = useState([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     fetchStores();
@@ -95,6 +101,28 @@ const MapExplorer = () => {
     setSelectedShopType(e.target.value);
   };
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -107,6 +135,263 @@ const MapExplorer = () => {
     );
   }
 
+  // Handle share map
+  const handleShareMap = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'MotoMINDORO Map',
+        text: `Check out motorcycle stores in Oriental Mindoro - ${filteredStores.length} stores found`,
+        url: window.location.href
+      }).catch(err => console.log('Error sharing:', err));
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      alert('Map link copied to clipboard!');
+    }
+  };
+
+  // Handle print map
+  const handlePrintMap = () => {
+    window.print();
+  };
+
+  // Fullscreen View
+  if (isFullscreen) {
+    return (
+      <div className="fixed inset-0 bg-gray-900 z-50 flex flex-col md:flex-row">
+        {/* Sidebar - Mobile: Bottom Sheet, Desktop: Left Panel */}
+        <div className={`bg-white transition-all duration-300 ${
+          sidebarOpen 
+            ? 'md:w-80 w-full h-auto md:h-full max-h-[70vh] md:max-h-full' 
+            : 'w-0 h-0'
+        } overflow-hidden flex flex-col shadow-2xl md:relative absolute bottom-0 left-0 right-0 md:bottom-auto md:left-auto md:right-auto z-20 rounded-t-3xl md:rounded-none`}>
+          {/* Sidebar Header */}
+          <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600">
+            <div className="flex items-center space-x-3">
+              <img src="/motomindoro_logo.png" alt="Logo" className="w-10 h-10 object-contain" />
+              <h2 className="text-lg font-bold text-white">MotoMINDORO</h2>
+            </div>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+            >
+              <FaTimes />
+            </button>
+          </div>
+
+          {/* Sidebar Navigation */}
+          <div className="flex-1 overflow-y-auto">
+            <nav className="p-2">
+              {/* Search - Opens search in sidebar */}
+              <button
+                onClick={() => {
+                  const searchInput = document.getElementById('fullscreen-search');
+                  if (searchInput) searchInput.focus();
+                }}
+                className="w-full p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2 text-left"
+              >
+                <FaSearch className="text-gray-600" />
+                <span className="font-medium text-gray-700">Search</span>
+              </button>
+
+              {/* Saved - Navigate to favorites */}
+              <Link
+                to="/favorites"
+                className="block p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2"
+              >
+                <FaBookmark className="text-gray-600" />
+                <span className="font-medium text-gray-700">Saved</span>
+              </Link>
+
+              {/* Recents - Navigate to dashboard */}
+              <Link
+                to="/dashboard"
+                className="block p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2"
+              >
+                <FaClock className="text-gray-600" />
+                <span className="font-medium text-gray-700">Recents</span>
+              </Link>
+
+              <div className="border-t border-gray-200 my-2"></div>
+
+              {/* Location Sharing - Get current location */}
+              <button
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        alert(`Your location: ${position.coords.latitude}, ${position.coords.longitude}`);
+                      },
+                      (error) => {
+                        alert('Unable to get your location');
+                      }
+                    );
+                  }
+                }}
+                className="w-full p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2 text-left"
+              >
+                <FaMapMarkerAlt className="text-gray-600" />
+                <span className="font-medium text-gray-700">Location sharing</span>
+              </button>
+
+              {/* Share or embed map */}
+              <button
+                onClick={handleShareMap}
+                className="w-full p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2 text-left"
+              >
+                <FaShareAlt className="text-gray-600" />
+                <span className="font-medium text-gray-700">Share or embed map</span>
+              </button>
+
+              {/* Print */}
+              <button
+                onClick={handlePrintMap}
+                className="w-full p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2 text-left"
+              >
+                <FaPrint className="text-gray-600" />
+                <span className="font-medium text-gray-700">Print</span>
+              </button>
+
+              <div className="border-t border-gray-200 my-2"></div>
+
+              {/* Add a missing place */}
+              <Link
+                to="/suggest-location"
+                className="p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors flex items-center space-x-3 mb-2"
+              >
+                <FaPlus className="text-gray-600" />
+                <span className="font-medium text-gray-700">Add a missing place</span>
+              </Link>
+
+              <div className="border-t border-gray-200 my-2"></div>
+
+              {/* Filters Section */}
+              <div className="p-3">
+                <h3 className="text-xs font-bold text-gray-500 uppercase mb-3">Filters</h3>
+                
+                {/* Municipality Filter */}
+                <div className="mb-3">
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Municipality</label>
+                  <select
+                    value={selectedCity}
+                    onChange={handleCityFilter}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">All Municipalities</option>
+                    {cities.map((city) => (
+                      <option key={city} value={city}>{city}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Shop Type Filter */}
+                <div className="mb-3">
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">Shop Type</label>
+                  <select
+                    value={selectedShopType}
+                    onChange={handleShopTypeFilter}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">All Types</option>
+                    <option value="motorcycle_shop">🏍️ Motorcycle Shops</option>
+                    <option value="vulcanizing_shop">🔧 Vulcanizing Shops</option>
+                    <option value="gasoline_station">⛽ Gas Stations</option>
+                  </select>
+                </div>
+
+                {/* Results Count */}
+                <div className="mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded-lg">
+                  Showing <span className="font-bold text-blue-600">{filteredStores.length}</span> store{filteredStores.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+            </nav>
+          </div>
+
+          {/* Sidebar Footer */}
+          <div className="p-4 border-t border-gray-200 bg-gray-50">
+            <button className="w-full flex items-center justify-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors">
+              <FaCog />
+              <span className="text-sm font-medium">Settings</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Toggle Sidebar Button (when closed) - Mobile: Bottom, Desktop: Top-Left */}
+        {!sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="absolute md:top-4 md:left-4 bottom-4 left-1/2 md:left-auto transform -translate-x-1/2 md:translate-x-0 z-10 bg-white px-6 py-3 md:p-3 rounded-full md:rounded-lg shadow-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+          >
+            <FaBars className="text-gray-700" />
+            <span className="md:hidden font-medium text-gray-700">Show Menu</span>
+          </button>
+        )}
+
+        {/* Map Container */}
+        <div className="flex-1 relative">
+          {/* Top Controls */}
+          <div className="absolute top-4 left-4 right-4 md:left-auto z-10 flex flex-col md:flex-row items-stretch md:items-center space-y-2 md:space-y-0 md:space-x-2">
+            {/* Search Bar - Full width on mobile */}
+            <div className="bg-white rounded-lg shadow-lg px-4 py-3 flex items-center space-x-2 w-full md:w-96">
+              <FaSearch className="text-gray-400 flex-shrink-0" />
+              <input
+                id="fullscreen-search"
+                type="text"
+                placeholder="Search stores..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className="flex-1 outline-none text-sm"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+
+            {/* Exit Fullscreen */}
+            <button
+              onClick={toggleFullscreen}
+              className="bg-white p-3 rounded-lg shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center md:w-auto"
+              title="Exit fullscreen"
+            >
+              <FaCompress className="text-gray-700" />
+              <span className="ml-2 md:hidden text-sm font-medium text-gray-700">Exit</span>
+            </button>
+          </div>
+
+          {/* Map */}
+          <div className="w-full h-full">
+            <MapComponent stores={filteredStores} />
+          </div>
+
+          {/* Map Legend - Hidden on mobile when sidebar is open */}
+          <div className={`absolute ${sidebarOpen ? 'hidden md:block' : 'block'} bottom-4 right-4 bg-white rounded-lg shadow-lg p-3 md:p-4 max-w-xs`}>
+            <h3 className="text-xs md:text-sm font-bold mb-2 text-gray-900">Legend</h3>
+            <div className="space-y-1.5 md:space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 md:w-4 md:h-4 bg-blue-600 rounded-full flex-shrink-0"></div>
+                <span className="text-xs text-gray-700">Motorcycle Shops</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 md:w-4 md:h-4 bg-yellow-500 rounded-full flex-shrink-0"></div>
+                <span className="text-xs text-gray-700">Vulcanizing Shops</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 md:w-4 md:h-4 bg-red-600 rounded-full flex-shrink-0"></div>
+                <span className="text-xs text-gray-700">Gas Stations</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal View
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header with Background */}
@@ -214,6 +499,16 @@ const MapExplorer = () => {
                 <span className="hidden sm:inline">Suggest Location</span>
                 <span className="sm:hidden">Suggest</span>
               </Link>
+
+              {/* Fullscreen Button */}
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+                title="Enter fullscreen mode"
+              >
+                <FaExpand />
+                <span className="hidden sm:inline">Fullscreen</span>
+              </button>
               
               <div className="flex bg-gray-100 rounded-xl p-1">
                 <button

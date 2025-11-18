@@ -48,12 +48,15 @@ api.interceptors.request.use(
   }
 );
 
+// Import cookie utilities
+import { clearAuthCookies } from '../utils/cookies';
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Clear user data from sessionStorage
-      sessionStorage.removeItem('user');
+      // Clear user data from cookies
+      clearAuthCookies();
       window.location.href = '/login';
     }
     return Promise.reject(error);
