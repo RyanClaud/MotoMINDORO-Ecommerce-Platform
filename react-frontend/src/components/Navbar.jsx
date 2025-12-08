@@ -174,8 +174,8 @@ const Navbar = () => {
       {/* Premium Gradient Accent Line */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600"></div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 md:h-24">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between h-14">
           {/* Logo - Enhanced */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 md:space-x-3 group">
@@ -188,16 +188,16 @@ const Navbar = () => {
                   <img 
                     src="/motomindoro_logo.png" 
                     alt="MotoMindoro Logo" 
-                    className="w-12 h-12 md:w-16 md:h-16 object-contain drop-shadow-2xl"
+                    className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-lg"
                   />
                 </div>
               </div>
               
               <div>
-                <span className="text-lg md:text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent block leading-tight">
+                <span className="text-base md:text-lg font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent block leading-tight">
                   MotoMINDORO
                 </span>
-                <span className="hidden md:block text-xs text-gray-500 font-semibold">Find Your Dream Ride</span>
+                <span className="hidden md:block text-[10px] text-gray-500 font-semibold">Find Your Dream Ride</span>
               </div>
             </Link>
           </div>
@@ -221,28 +221,31 @@ const Navbar = () => {
 
             <Link 
               to="/search" 
-              className="group relative flex items-center space-x-1.5 px-3 py-2 rounded-2xl text-gray-700 hover:text-blue-600 transition-all duration-300 font-bold overflow-hidden"
+              className="group relative flex items-center space-x-1 px-2 py-1 rounded-lg text-gray-700 hover:text-blue-600 transition-all duration-300 font-semibold text-sm overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <FaSearch className="relative group-hover:scale-110 transition-transform" />
               <span className="relative">Search</span>
             </Link>
             
-            <Link 
-              to="/map" 
-              className="group relative flex items-center space-x-1.5 px-3 py-2 rounded-2xl text-gray-700 hover:text-blue-600 transition-all duration-300 font-bold overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <FaMapMarkedAlt className="relative group-hover:scale-110 transition-transform" />
-              <span className="relative">Map</span>
-            </Link>
+            {/* Map link - Only visible when logged in */}
+            {user && (
+              <Link 
+                to="/map" 
+                className="group relative flex items-center space-x-1 px-2 py-1 rounded-lg text-gray-700 hover:text-blue-600 transition-all duration-300 font-semibold text-sm overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <FaMapMarkedAlt className="relative group-hover:scale-110 transition-transform" />
+                <span className="relative">Map</span>
+              </Link>
+            )}
 
             {user ? (
               <>
                 {user.role !== 'admin' && (
                   <Link 
                     to="/favorites" 
-                    className="group relative flex items-center space-x-1.5 px-3 py-2 rounded-2xl text-gray-700 hover:text-red-500 transition-all duration-300 font-bold overflow-hidden"
+                    className="group relative flex items-center space-x-1 px-2 py-1 rounded-lg text-gray-700 hover:text-red-500 transition-all duration-300 font-semibold text-sm overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <FaHeart className="relative group-hover:scale-110 transition-transform" />
@@ -253,7 +256,7 @@ const Navbar = () => {
                 {user.role !== 'admin' && (
                   <Link 
                     to="/messages" 
-                    className="group relative flex items-center space-x-1.5 px-3 py-2 rounded-2xl text-gray-700 hover:text-green-600 transition-all duration-300 font-bold overflow-hidden"
+                    className="group relative flex items-center space-x-1 px-2 py-1 rounded-lg text-gray-700 hover:text-green-600 transition-all duration-300 font-semibold text-sm overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative">
@@ -272,7 +275,7 @@ const Navbar = () => {
                 
                 <Link 
                   to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'}
-                  className="group relative px-3 py-2 rounded-2xl text-gray-700 hover:text-blue-600 transition-all duration-300 font-bold overflow-hidden"
+                  className="group relative px-2 py-1 rounded-lg text-gray-700 hover:text-blue-600 transition-all duration-300 font-semibold text-sm overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <span className="relative">{user.role === 'admin' ? 'Admin' : 'Dashboard'}</span>
@@ -288,14 +291,14 @@ const Navbar = () => {
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 >
-                  <button className="flex items-center space-x-2 px-3 py-2 rounded-2xl text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 font-bold">
+                  <button className="flex items-center space-x-1 px-2 py-1 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 font-semibold text-sm">
                     <div className="relative">
                       <div className={`absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-400 rounded-full blur transition-opacity ${showDropdown ? 'opacity-100' : 'opacity-0'}`}></div>
-                      <div className="relative w-9 h-9 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-black text-xs shadow-lg border-2 border-white">
+                      <div className="relative w-7 h-7 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-[10px] shadow-md border border-white">
                         {getInitials(user.name)}
                       </div>
                     </div>
-                    <span className="text-sm font-black">{getInitials(user.name)}</span>
+                    <span className="text-xs font-bold">{getInitials(user.name)}</span>
                   </button>
                   
                   {/* Enhanced Dropdown */}
@@ -342,16 +345,16 @@ const Navbar = () => {
               <>
                 <Link 
                   to="/login" 
-                  className="group relative px-6 py-2.5 rounded-2xl text-gray-700 hover:text-blue-600 transition-all duration-300 font-bold overflow-hidden"
+                  className="group relative px-3 py-1.5 rounded-lg text-gray-700 hover:text-blue-600 transition-all duration-300 font-semibold text-sm overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <span className="relative">Login</span>
                 </Link>
                 <Link
                   to="/register"
-                  className="group relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-8 py-3 rounded-2xl hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transition-all duration-300 font-black shadow-xl hover:shadow-2xl transform hover:scale-105 overflow-hidden"
+                  className="group relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white px-4 py-1.5 rounded-lg hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transition-all duration-300 font-bold text-sm shadow-lg hover:shadow-xl overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <span className="relative">Register</span>
                 </Link>
               </>
@@ -396,16 +399,19 @@ const Navbar = () => {
               <span>Search</span>
             </Link>
 
-            <Link 
-              to="/map" 
-              onClick={closeMobileMenu}
-              className="flex items-center space-x-4 px-5 py-4 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105"
-            >
-              <div className="bg-indigo-100 p-2 rounded-xl">
-                <FaMapMarkedAlt className="text-xl text-indigo-600" />
-              </div>
-              <span>Map</span>
-            </Link>
+            {/* Map link - Only visible when logged in */}
+            {user && (
+              <Link 
+                to="/map" 
+                onClick={closeMobileMenu}
+                className="flex items-center space-x-4 px-5 py-4 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-600 transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105"
+              >
+                <div className="bg-indigo-100 p-2 rounded-xl">
+                  <FaMapMarkedAlt className="text-xl text-indigo-600" />
+                </div>
+                <span>Map</span>
+              </Link>
+            )}
 
             {user ? (
               <>

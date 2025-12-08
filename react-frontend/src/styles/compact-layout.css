@@ -1,0 +1,100 @@
+/* Compact Layout Styles - Fit content in viewport */
+
+/* Main container should fit viewport */
+.compact-page {
+  min-height: calc(100vh - 80px); /* Subtract navbar height */
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+/* Reduce padding and margins globally */
+.compact-section {
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.compact-card {
+  padding: 1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* Compact headings */
+.compact-h1 {
+  font-size: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.compact-h2 {
+  font-size: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.compact-h3 {
+  font-size: 1.125rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Compact spacing */
+.compact-space-y > * + * {
+  margin-top: 0.5rem !important;
+}
+
+.compact-gap {
+  gap: 0.5rem !important;
+}
+
+/* Compact grid */
+.compact-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Reduce form spacing */
+.compact-form input,
+.compact-form textarea,
+.compact-form select {
+  padding: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.compact-form label {
+  margin-bottom: 0.25rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Compact buttons */
+.compact-btn {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Compact tables */
+.compact-table th,
+.compact-table td {
+  padding: 0.5rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Scrollable sections within page */
+.compact-scroll {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Hide or minimize footer on compact pages */
+.compact-layout footer {
+  display: none;
+}
+
+/* Responsive compact adjustments */
+@media (max-width: 768px) {
+  .compact-page {
+    padding: 0.5rem;
+  }
+  
+  .compact-card {
+    padding: 0.75rem !important;
+  }
+}

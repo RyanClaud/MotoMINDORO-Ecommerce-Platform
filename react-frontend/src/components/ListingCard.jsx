@@ -39,12 +39,12 @@ const ListingCard = ({ listing, onFavorite, isFavorited }) => {
       {/* Inner Card */}
       <div className="relative bg-white rounded-3xl overflow-hidden">
         <Link to={`/listings/${listing.id}`}>
-          <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+          <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
             <img
               src={imageUrl}
               alt={listing.title}
               onError={handleImageError}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
             />
             {/* Enhanced Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

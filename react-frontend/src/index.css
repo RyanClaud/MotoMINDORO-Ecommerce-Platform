@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'leaflet/dist/leaflet.css';
+@import './styles/compact-layout.css';
 
 /* Custom Animations */
 @keyframes fade-in {
@@ -255,10 +256,13 @@ html {
   transition-duration: 150ms;
 }
 
-/* Remove default styles */
-body {
+/* Remove default styles and prevent horizontal scroll */
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -266,10 +270,81 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Image Loading */
+/* Prevent horizontal scroll on all elements */
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Reduce default spacing */
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Compact page wrapper */
+.page-wrapper {
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Reduce excessive padding */
+.py-12 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.py-8 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+/* Make sections more compact */
+.space-y-8 > * + * {
+  margin-top: 1.5rem !important;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1rem !important;
+}
+
+/* Image Loading - Ensure images are fully visible */
 img {
   max-width: 100%;
   height: auto;
+  object-fit: contain; /* Ensure full image is visible */
+}
+
+/* Fix for card images */
+.card img,
+.listing-card img,
+[class*="card"] img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 16/9;
+}
+
+/* Ensure images in containers are fully visible */
+.image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Prevent text selection on buttons */

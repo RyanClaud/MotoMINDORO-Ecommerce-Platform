@@ -898,7 +898,7 @@ const MapComponent = ({ stores = [] }) => {
                   );
                 })()}
 
-                <div className="mb-2">
+                <div className="mb-2 flex flex-wrap gap-2">
                   <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${
                     store.shop_type === 'motorcycle_shop' ? 'bg-blue-100 text-blue-800' :
                     store.shop_type === 'vulcanizing_shop' ? 'bg-yellow-100 text-yellow-800' :
@@ -908,6 +908,13 @@ const MapComponent = ({ stores = [] }) => {
                      store.shop_type === 'vulcanizing_shop' ? '🔧 Vulcanizing Shop' :
                      '⛽ Gas Station'}
                   </span>
+                  
+                  {/* Spare Parts Badge */}
+                  {store.spare_parts_count > 0 && (
+                    <span className="inline-block px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-800">
+                      📦 {store.spare_parts_count} Spare Parts
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="font-bold text-lg text-gray-900 mb-2">{store.name}</h3>

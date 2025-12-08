@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { 
   FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, 
-  FaSave, FaTimes, FaCamera, FaUserCircle 
+  FaSave, FaTimes, FaCamera, FaUserCircle, FaLock, FaShieldAlt 
 } from 'react-icons/fa';
 
 const EditProfile = () => {
@@ -21,17 +21,47 @@ const EditProfile = () => {
     address: '',
     profile_photo: null,
     business_logo: null,
+    security_question_1: '',
+    security_answer_1: '',
+    security_question_2: '',
+    security_answer_2: '',
   });
   const [businessLogoPreview, setBusinessLogoPreview] = useState(null);
+  const [showSecurityQuestions, setShowSecurityQuestions] = useState(false);
+  const [hasSecurityQuestions, setHasSecurityQuestions] = useState(false);
+  
+  // Security Questions Options
+  const securityQuestions1 = [
+    'What city were you born in?',
+    'What is your mother\'s maiden name?',
+    'What was the name of your first pet?',
+    'What is your favorite motorcycle brand?',
+    'What was your first motorcycle model?',
+  ];
+  
+  const securityQuestions2 = [
+    'What is your father\'s middle name?',
+    'In what city did you meet your spouse/partner?',
+    'What is the name of your favorite childhood friend?',
+    'What street did you live on in third grade?',
+    'What is your oldest sibling\'s middle name?',
+  ];
 
   useEffect(() => {
     if (user) {
+      const hasQuestions = user.security_question_1 && user.security_question_2;
+      setHasSecurityQuestions(hasQuestions);
+      
       setFormData({
         name: user.name || '',
         phone: user.phone || '',
         address: user.address || '',
         profile_photo: null,
         business_logo: null,
+        security_question_1: user.security_question_1 || '',
+        security_answer_1: '',
+        security_question_2: user.security_question_2 || '',
+        security_answer_2: '',
       });
       
       if (user.profile_photo) {
@@ -123,6 +153,18 @@ const EditProfile = () => {
       submitData.append('address', formData.address || '');
       submitData.append('_method', 'PUT');
       
+      // Add security questions if they're being updated
+      if (showSecurityQuestions || !hasSecurityQuestions) {
+        if (formData.security_question_1 && formData.security_answer_1) {
+          submitData.append('security_question_1', formData.security_question_1);
+          submitData.append('security_answer_1', formData.security_answer_1);
+        }
+        if (formData.security_question_2 && formData.security_answer_2) {
+          submitData.append('security_question_2', formData.security_question_2);
+          submitData.append('security_answer_2', formData.security_answer_2);
+        }
+      }
+      
       if (formData.profile_photo) {
         console.log('Uploading profile photo:', formData.profile_photo.name, formData.profile_photo.size);
         submitData.append('profile_photo', formData.profile_photo);
@@ -147,6 +189,7 @@ const EditProfile = () => {
 
       updateUser(response.data);
       setSuccess('Profile updated successfully!');
+      setShowSecurityQuestions(false);
       
       setTimeout(() => {
         navigate('/profile');
@@ -321,6 +364,112 @@ const EditProfile = () => {
                     placeholder="Enter your complete address"
                   />
                 </div>
+              </div>
+
+              {/* Security Questions Section */}
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <FaShieldAlt className="text-2xl text-yellow-600" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Security Questions</h3>
+                      <p className="text-sm text-gray-600">
+                        {hasSecurityQuestions 
+                          ? 'Your security questions are set up' 
+                          : 'Set up security questions for account recovery'}
+                      </p>
+                    </div>
+                  </div>
+                  {hasSecurityQuestions && (
+                    <button
+                      type="button"
+                      onClick={() => setShowSecurityQuestions(!showSecurityQuestions)}
+                      className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all text-sm font-medium"
+                    >
+                      {showSecurityQuestions ? 'Cancel' : 'Update'}
+                    </button>
+                  )}
+                </div>
+
+                {(!hasSecurityQuestions || showSecurityQuestions) && (
+                  <div className="space-y-4 mt-4">
+                    {/* Security Question 1 */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Security Question 1 *
+                      </label>
+                      <div className="relative mb-3">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <FaLock className="text-gray-400" />
+                        </div>
+                        <select
+                          name="security_question_1"
+                          value={formData.security_question_1}
+                          onChange={handleChange}
+                          required={!hasSecurityQuestions || showSecurityQuestions}
+                          className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        >
+                          <option value="">Select a question</option>
+                          {securityQuestions1.map((question, index) => (
+                            <option key={index} value={question}>
+                              {question}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <input
+                        type="text"
+                        name="security_answer_1"
+                        value={formData.security_answer_1}
+                        onChange={handleChange}
+                        required={!hasSecurityQuestions || showSecurityQuestions}
+                        placeholder="Your answer"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    {/* Security Question 2 */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Security Question 2 *
+                      </label>
+                      <div className="relative mb-3">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <FaLock className="text-gray-400" />
+                        </div>
+                        <select
+                          name="security_question_2"
+                          value={formData.security_question_2}
+                          onChange={handleChange}
+                          required={!hasSecurityQuestions || showSecurityQuestions}
+                          className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                        >
+                          <option value="">Select a question</option>
+                          {securityQuestions2.map((question, index) => (
+                            <option key={index} value={question}>
+                              {question}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <input
+                        type="text"
+                        name="security_answer_2"
+                        value={formData.security_answer_2}
+                        onChange={handleChange}
+                        required={!hasSecurityQuestions || showSecurityQuestions}
+                        placeholder="Your answer"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 mt-4">
+                      <p className="text-xs text-yellow-800">
+                        <strong>Important:</strong> Remember your answers. They will be used to recover your account if you forget your password.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Business Logo Upload (for sellers) */}

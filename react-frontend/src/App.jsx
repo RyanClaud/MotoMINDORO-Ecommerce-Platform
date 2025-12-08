@@ -8,9 +8,9 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/DashboardNew';
 import Search from './pages/Search';
-import ListingDetails from './pages/ListingDetails';
+import ListingDetails from './pages/ListingDetailsCompact';
 import StoreDetails from './pages/StoreDetails';
 import MapExplorer from './pages/MapExplorer';
 import CreateStore from './pages/CreateStore';
@@ -31,14 +31,21 @@ import AdminListings from './pages/AdminListings';
 import AdminLocationSuggestions from './pages/AdminLocationSuggestions';
 import SuggestLocation from './pages/SuggestLocation';
 import ProtectedRoute from './components/ProtectedRoute';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import EnhancedMapExplorer from './pages/EnhancedMapExplorer';
+import StoreLandingPage from './pages/StoreLandingPage';
+import StoreLandingPageEnhanced from './pages/StoreLandingPageEnhanced';
+import ManageSpareParts from './pages/ManageSpareParts';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <ScrollToTop />
+        <div className="h-screen flex flex-col bg-gray-50 overflow-hidden">
           <Navbar />
-          <main className="flex-grow">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -50,8 +57,12 @@ function App() {
               <Route path="/search" element={<Search />} />
               <Route path="/listings/:id" element={<ListingDetails />} />
               <Route path="/stores/:id" element={<StoreDetails />} />
-              <Route path="/map" element={<MapExplorer />} />
-              <Route path="/suggest-location" element={<SuggestLocation />} />
+              <Route path="/store/:slug" element={<StoreLandingPageEnhanced />} />
+              
+              {/* Protected Map Routes - Login Required */}
+              <Route path="/map" element={<ProtectedRoute><MapExplorer /></ProtectedRoute>} />
+              <Route path="/map/enhanced" element={<ProtectedRoute><EnhancedMapExplorer /></ProtectedRoute>} />
+              <Route path="/suggest-location" element={<ProtectedRoute><SuggestLocation /></ProtectedRoute>} />
               
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
@@ -62,9 +73,11 @@ function App() {
               <Route path="/stores/:id/edit" element={<ProtectedRoute><EditStore /></ProtectedRoute>} />
               <Route path="/listings/create" element={<ProtectedRoute><CreateListing /></ProtectedRoute>} />
               <Route path="/listings/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
+              <Route path="/stores/:storeId/spare-parts" element={<ProtectedRoute><ManageSpareParts /></ProtectedRoute>} />
               
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/admin/analytics" element={<ProtectedRoute><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
               <Route path="/admin/stores" element={<ProtectedRoute><AdminStores /></ProtectedRoute>} />
               <Route path="/admin/listings" element={<ProtectedRoute><AdminListings /></ProtectedRoute>} />

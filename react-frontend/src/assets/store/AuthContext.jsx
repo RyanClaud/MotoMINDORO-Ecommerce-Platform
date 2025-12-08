@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Login failed:', error);
-      // Here you would typically set an error state to show to the user
+     
     }
   };
 
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error('Registration failed:', error);
       if (error.response && error.response.data) {
-        // You can set an error state here to show validation messages to the user
+        
         console.error('Validation errors:', error.response.data.errors);
       }
     }
